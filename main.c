@@ -26,7 +26,7 @@ void tela_menu_principal() {
 
 
 
-void menu_principal() {
+int main(void) {
     int opcao;
 
     do {
@@ -76,4 +76,5 @@ void menu_principal() {
         }
 
     } while (opcao != 0);
+    return 0;
 }
