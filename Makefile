@@ -1,6 +1,7 @@
 all:
-	gcc -Wall -c include/*.h                # compila os .h em .gch
-	gcc -Wall -c *.c -I include            # compila os .c em .o
+	gcc -Wall -c headers/*.h                # compila os .h em .gch
+	gcc -Wall -c modulos/*.c -I headers     # compila os .c em .o
+	gcc -Wall -c *c -I headers
 	gcc -o sig-burger *.o
 
 clean:
