@@ -14,3 +14,10 @@ void limparBuffer() {
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
 }
+
+
+
+void pausar() {
+    printf("\n Pressione Enter para continuar...");
+    limparBuffer();
+}
