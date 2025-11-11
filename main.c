@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "cardapio.h"
+#include "utils.h"
 
 void tela_menu_principal() {
 
@@ -54,8 +55,7 @@ int main(void) {
                 // Chamar função do módulo Financeiro
                 break;
             case 6:
-                printf("Módulo Relatórios selecionado.\n");
-                // Chamar função do módulo Relatórios
+                printf("Modulo relatorio selecionado");
                 break;
             case 7:
                 printf("Sobre o SIG-Burger selecionado.\n");
@@ -64,14 +64,11 @@ int main(void) {
             case 0:
                 printf("Saindo do sistema...\n");
                 break;
+                
             default:
                 printf("Opção inválida. Tente novamente.\n");
-        }
+                pausar();
 
-        if (opcao != 0) {
-            printf("Pressione Enter para continuar...");
-            while (getchar() != '\n'); // Limpa o buffer
-            getchar(); // Espera o Enter
         }
 
     } while (opcao != 0);
