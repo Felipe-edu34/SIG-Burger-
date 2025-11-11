@@ -3,8 +3,8 @@
 #include <string.h>
 
 
-void menu_principal() {
-    
+void tela_menu_principal() {
+
     system("clear||cls");
     printf("╔══════════════════════════════════════════════════╗\n");
     printf("║ SIG-BURGER - SISTEMA DE GESTÃO DE HAMBURGUERIA   ║\n");
@@ -22,4 +22,58 @@ void menu_principal() {
     printf("╚══════════════════════════════════════════════════╝\n");
     printf("Escolha uma opção: ");
 
+}
+
+
+
+void menu_principal() {
+    int opcao;
+
+    do {
+        tela_menu_principal();
+        scanf("%d", &opcao);
+
+        switch (opcao) {
+            case 1:
+                printf("Módulo Clientes selecionado.\n");
+                // Chamar função do módulo Clientes
+                break;
+            case 2:
+                printf("Módulo Pedidos selecionado.\n");
+                // Chamar função do módulo Pedidos
+                break;
+            case 3:
+                printf("Módulo Cardápio selecionado.\n");
+                // Chamar função do módulo Cardápio
+                break;
+            case 4:
+                printf("Módulo Estoque selecionado.\n");
+                // Chamar função do módulo Estoque
+                break;
+            case 5:
+                printf("Módulo Financeiro selecionado.\n");
+                // Chamar função do módulo Financeiro
+                break;
+            case 6:
+                printf("Módulo Relatórios selecionado.\n");
+                // Chamar função do módulo Relatórios
+                break;
+            case 7:
+                printf("Sobre o SIG-Burger selecionado.\n");
+                // Chamar função sobre o SIG-Burger
+                break;
+            case 0:
+                printf("Saindo do sistema...\n");
+                break;
+            default:
+                printf("Opção inválida. Tente novamente.\n");
+        }
+
+        if (opcao != 0) {
+            printf("Pressione Enter para continuar...");
+            while (getchar() != '\n'); // Limpa o buffer
+            getchar(); // Espera o Enter
+        }
+
+    } while (opcao != 0);
 }
