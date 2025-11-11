@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include "cardapio.h"
 
 void tela_menu_principal() {
 
@@ -43,8 +43,7 @@ int main(void) {
                 // Chamar função do módulo Pedidos
                 break;
             case 3:
-                printf("Módulo Cardápio selecionado.\n");
-                // Chamar função do módulo Cardápio
+                cardapio();
                 break;
             case 4:
                 printf("Módulo Estoque selecionado.\n");
