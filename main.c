@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "cardapio.h"
+#include "cliente.h"
 #include "utils.h"
 
 void tela_menu_principal() {
@@ -36,8 +37,7 @@ int main(void) {
 
         switch (opcao) {
             case 1:
-                printf("Módulo Clientes selecionado.\n");
-                // Chamar função do módulo Clientes
+                cliente();
                 break;
             case 2:
                 printf("Módulo Pedidos selecionado.\n");
