@@ -2,7 +2,6 @@
 #define CARDAPIO_H
 
 typedef struct {
-    int codigo;
     char nome[50];
     char categoria[20];
     char descricao[100];
@@ -15,7 +14,8 @@ void cardapio();
 int confirma_dados_cardapio(Itemcardapio* item);
 void exibir_item(Itemcardapio* item);
 void gravar_item(Itemcardapio* item);
-int gerar_codigo();
+void gerar_codigo(char *codigo);
 void cadastrar_item_ao_cardapio();
+void excluir_item_do_cardapio();
 
 #endif // CARDAPIO_H
