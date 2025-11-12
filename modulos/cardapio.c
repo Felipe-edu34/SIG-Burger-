@@ -48,7 +48,6 @@ void exibir_item(Itemcardapio* item){
     printf("╔══════════════════════════════════════════════════╗\n");
     printf("║             ITEM CADASTRADO (VISUALIZAÇÃO)       ║\n");
     printf("╠══════════════════════════════════════════════════╣\n");
-    printf("║ Código:      %d\n", item->codigo);
     printf("║ Nome:        %s\n", item->nome);
     printf("║ Categoria:   %s\n", item->categoria);
     printf("║ Descrição:   %s\n", item->descricao);
@@ -72,35 +71,6 @@ void gravar_item(Itemcardapio* item){
 
 
 
-int gerar_codigo() {
-    FILE *arq;
-    int codigo = 1;
-
-    // tenta abrir o arquivo em modo leitura binária
-    arq = fopen("codigo.dat", "rb");
-
-    // se já existir, lê o último código
-    if (arq != NULL) {
-        fread(&codigo, sizeof(int), 1, arq);
-        fclose(arq);
-        codigo++; // incrementa para o próximo
-    }
-
-    // salva o novo código atualizado
-    arq = fopen("codigo.dat", "wb");
-    if (arq == NULL) {
-        printf("Erro ao abrir o arquivo de código.\n");
-        return -1;
-    }
-
-    fwrite(&codigo, sizeof(int), 1, arq);
-    fclose(arq);
-
-    return codigo;
-}
-
-
-
 void cadastrar_item_ao_cardapio() {
 
     limpar_tela();
@@ -109,9 +79,6 @@ void cadastrar_item_ao_cardapio() {
     printf("╔══════════════════════════════════════════════════╗\n");
     printf("║              CADASTRAR ITEM AO CARDÁPIO          ║\n");
     printf("╚══════════════════════════════════════════════════╝\n");
-
-    item->codigo = gerar_codigo();
-    limparBuffer();
 
     printf("► Nome do Item: ");
     ler_string(item->nome, 50);
@@ -141,6 +108,27 @@ void cadastrar_item_ao_cardapio() {
 
 
 
+void excluir_item_do_cardapio() {
+
+    Itemcardapio* item;
+    int encontrado = 0;
+    FILE *arq_item_cardapio;
+    char confirm;
+    item = (Itemcardapio*) malloc(sizeof(Itemcardapio));
+    if (item == NULL) {
+        printf("Erro ao alocar memoria para o cardapio.\n");
+        return;
+    }
+
+    printf("╔══════════════════════════════════════════════════╗\n");
+    printf("║              EXCLUIR ITEM DO CARDAPIO            ║\n");
+    printf("╚══════════════════════════════════════════════════╝\n");
+
+  
+}
+
+
+
 void cardapio() {
     int opcao;
 
@@ -153,8 +141,7 @@ void cardapio() {
                 cadastrar_item_ao_cardapio();
                 break;
             case 2:
-                printf("Remover Item do Cardápio selecionado.\n");
-                // Chamar função para remover item
+                excluir_item_do_cardapio();
                 break;
             case 3:
                 printf("Atualizar Item do Cardápio selecionado.\n");
