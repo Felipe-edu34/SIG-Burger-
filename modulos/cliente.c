@@ -188,6 +188,90 @@ void editar_cliente(void) {
     pausar();
 }
 
+void excluir_cliente(void) {
+    FILE* fp;
+    Cliente cli;
+    int numero, contador = 0, posicao = -1;
+    long pos_arquivo;
+    char confirma;
+    
+    limpar_tela();
+    printf("\n");
+    printf("        ╔══════════════════════════════════════════════════╗\n");
+    printf("        ║              EXCLUIR CLIENTE                     ║\n");
+    printf("        ╚══════════════════════════════════════════════════╝\n\n");
+    
+    fp = fopen(ARQUIVO_CLIENTES, "rb");
+    if (fp == NULL) {
+        printf("        Nenhum cliente cadastrado ainda.\n");
+        pausar();
+        return;
+    }
+    
+    printf("        Clientes cadastrados:\n\n");
+    while (fread(&cli, sizeof(Cliente), 1, fp) == 1) {
+        if (cli.status == 1) {
+            contador++;
+            printf("        %d - %s\n", contador, cli.nome);
+        }
+    }
+    fclose(fp);
+    
+    if (contador == 0) {
+        printf("\n        Nenhum cliente ativo encontrado.\n");
+        pausar();
+        return;
+    }
+    
+    printf("\n        Digite o número do cliente: ");
+    scanf("%d", &numero);
+    limparBuffer();
+    
+    if (numero < 1 || numero > contador) {
+        printf("\n        Número inválido!\n");
+        pausar();
+        return;
+    }
+    
+    fp = fopen(ARQUIVO_CLIENTES, "r+b");
+    contador = 0;
+    while (fread(&cli, sizeof(Cliente), 1, fp) == 1) {
+        if (cli.status == 1) {
+            contador++;
+            if (contador == numero) {
+                posicao = contador;
+                pos_arquivo = ftell(fp) - sizeof(Cliente);
+                break;
+            }
+        }
+    }
+    
+    if (posicao == -1) {
+        printf("\n        Cliente não encontrado!\n");
+        fclose(fp);
+        pausar();
+        return;
+    }
+    
+    printf("\n        Cliente: %s\n", cli.nome);
+    printf("        Telefone: %s\n\n", cli.telefone);
+    printf("        Confirmar exclusão? (s/n): ");
+    scanf("%c", &confirma);
+    limparBuffer();
+    
+    if (confirma == 's' || confirma == 'S') {
+        cli.status = 0;
+        fseek(fp, pos_arquivo, SEEK_SET);
+        fwrite(&cli, sizeof(Cliente), 1, fp);
+        printf("\n        Cliente excluído com sucesso!\n");
+    } else {
+        printf("\n        Exclusão cancelada!\n");
+    }
+    
+    fclose(fp);
+    pausar();
+}
+
 void cliente(void) {
     int opcao;
     
@@ -207,7 +291,7 @@ void cliente(void) {
                 editar_cliente();
                 break;
             case 4:
-                // excluir_cliente();
+                excluir_cliente();
                 break;
             case 0:
                 printf("\n Retornando ao menu principal...\n");
@@ -219,4 +303,3 @@ void cliente(void) {
         }
     } while(opcao != 0);
 }
-
