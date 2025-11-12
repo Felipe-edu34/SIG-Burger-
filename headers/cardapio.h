@@ -12,5 +12,10 @@ typedef struct {
 
 void tela_menu_principal();
 void cardapio();
+int confirma_dados_cardapio(Itemcardapio* item);
+void exibir_item(Itemcardapio* item);
+void gravar_item(Itemcardapio* item);
+int gerar_codigo();
+void cadastrar_item_ao_cardapio();
 
 #endif // CARDAPIO_H
