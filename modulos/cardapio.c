@@ -26,6 +26,21 @@ void menu_cardapio() {
 
 
 
+void exibir_item(Itemcardapio* item){
+    
+    printf("╔══════════════════════════════════════════════════╗\n");
+    printf("║             ITEM CADASTRADO (VISUALIZAÇÃO)       ║\n");
+    printf("╠══════════════════════════════════════════════════╣\n");
+    printf("║ Código:      %d\n", item->codigo);
+    printf("║ Nome:        %s\n", item->nome);
+    printf("║ Categoria:   %s\n", item->categoria);
+    printf("║ Descrição:   %s\n", item->descricao);
+    printf("║ Preço:       R$ %.2f\n", item->preco);
+    printf("╚══════════════════════════════════════════════════╝\n");
+}
+
+
+
 void gravar_item(Itemcardapio* item){
 
 
@@ -37,7 +52,6 @@ void gravar_item(Itemcardapio* item){
     fwrite(item, sizeof(Itemcardapio), 1, arq_item_cardapio);
     fclose(arq_item_cardapio);
 }
-
 
 
 
