@@ -111,6 +111,7 @@ void cadastrar_item_ao_cardapio() {
     printf("╚══════════════════════════════════════════════════╝\n");
 
     item->codigo = gerar_codigo();
+    limparBuffer();
 
     printf("► Nome do Item: ");
     ler_string(item->nome, 50);
@@ -133,7 +134,7 @@ void cadastrar_item_ao_cardapio() {
         return;
     }
     gravar_item(item);
-    printf("\n Cliente cadastrado com sucesso!\n");
+    printf("\n Item cadastrado com sucesso!\n");
     free(item);
     pausar();
 }
