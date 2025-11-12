@@ -26,6 +26,21 @@ void menu_cardapio() {
 
 
 
+void gravar_item(Itemcardapio* item){
+
+
+    FILE *arq_item_cardapio = fopen("item_cardapio.dat", "ab");              // Abre o arquivo em modo anexar (append)
+    if (arq_item_cardapio == NULL) {
+        return;
+    }
+
+    fwrite(item, sizeof(Itemcardapio), 1, arq_item_cardapio);
+    fclose(arq_item_cardapio);
+}
+
+
+
+
 int gerar_codigo() {
     FILE *arq;
     int codigo = 1;
@@ -79,8 +94,6 @@ void cadastrar_item_ao_cardapio() {
     scanf("%f", &item->preco);
 
     item->disponivel = 1;
-
-    
 
 }
 
