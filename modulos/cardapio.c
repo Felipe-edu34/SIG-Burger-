@@ -26,7 +26,7 @@ void menu_cardapio() {
 
 
 
-int confirma_dados_cliente(Itemcardapio* item) {
+int confirma_dados_cardapio(Itemcardapio* item) {
     char confirm;
     limparTela();
     exibir_cliente(item);
@@ -125,6 +125,16 @@ void cadastrar_item_ao_cardapio() {
 
     item->disponivel = 1;
 
+    if(!confirma_dados_cardapio(item)) {
+        printf("\nCadastro cancelado pelo usuário.\n");
+        free(item);
+        pausar();
+        return;
+    }
+    gravar_item(item);
+    printf("\n Cliente cadastrado com sucesso!\n");
+    free(item);
+    pausar();
 }
 
 
@@ -138,8 +148,7 @@ void cardapio() {
 
         switch (opcao) {
             case 1:
-                printf("Adicionar Item ao Cardápio selecionado.\n");
-                // Chamar função para adicionar item
+                cadastrar_item_ao_cardapio();
                 break;
             case 2:
                 printf("Remover Item do Cardápio selecionado.\n");
