@@ -26,8 +26,24 @@ void menu_cardapio() {
 
 
 
+int confirma_dados_cliente(Itemcardapio* item) {
+    char confirm;
+    limparTela();
+    exibir_cliente(item);
+    printf("Os dados do item novo do cardapio estão corretos? (S/N): ");
+    scanf(" %c", &confirm);
+    limparBuffer();
+
+    if (confirm == 'S' || confirm == 's') {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+
 void exibir_item(Itemcardapio* item){
-    
+
     printf("╔══════════════════════════════════════════════════╗\n");
     printf("║             ITEM CADASTRADO (VISUALIZAÇÃO)       ║\n");
     printf("╠══════════════════════════════════════════════════╣\n");
