@@ -7,7 +7,7 @@
 
 void menu_cardapio() {
 
-    system("clear||cls");
+    limpar_tela();
     printf("╔══════════════════════════════════════════════════╗\n");
     printf("║                  MÓDULO CARDÁPIO                 ║\n");
     printf("╠══════════════════════════════════════════════════╣\n");
@@ -28,8 +28,8 @@ void menu_cardapio() {
 
 int confirma_dados_cardapio(Itemcardapio* item) {
     char confirm;
-    limparTela();
-    exibir_cliente(item);
+    limpar_tela();
+    exibir_item(item);
     printf("Os dados do item novo do cardapio estão corretos? (S/N): ");
     scanf(" %c", &confirm);
     limparBuffer();
@@ -40,6 +40,7 @@ int confirma_dados_cardapio(Itemcardapio* item) {
         return 0;
     }
 }
+
 
 
 void exibir_item(Itemcardapio* item){
