@@ -14,7 +14,6 @@ void cardapio();
 int confirma_dados_cardapio(Itemcardapio* item);
 void exibir_item(Itemcardapio* item);
 void gravar_item(Itemcardapio* item);
-void gerar_codigo(char *codigo);
 void cadastrar_item_ao_cardapio();
 void excluir_item_do_cardapio();
 
