@@ -191,3 +191,89 @@ void remover_produto() {
     pausar();
 }
 
+
+
+void editar_produto() {
+    FILE *arq;
+    Produto *prod = (Produto*) malloc(sizeof(Produto));
+    int numero, contador = 0;
+    long pos_arquivo;
+
+    limpar_tela();
+    printf("╔══════════════════════════════════════════════════╗\n");
+    printf("║                EDITAR PRODUTO DO ESTOQUE          ║\n");
+    printf("╚══════════════════════════════════════════════════╝\n\n");
+
+    arq = fopen(ARQUIVO_ESTOQUE, "rb");
+    if (arq == NULL) {
+        printf("Nenhum produto cadastrado ainda.\n");
+        free(prod);
+        pausar();
+        return;
+    }
+
+    printf("Produtos cadastrados:\n\n");
+    while (fread(prod, sizeof(Produto), 1, arq) == 1) {
+        if (prod->ativo == 1) {
+            contador++;
+            printf(" %d - %s  (Qtd: %d, Validade: %s)\n",
+                   contador, prod->nome, prod->quantidade, prod->validade);
+        }
+    }
+    fclose(arq);
+
+    if (contador == 0) {
+        printf("\nNenhum produto ativo encontrado.\n");
+        free(prod);
+        pausar();
+        return;
+    }
+
+    printf("\nDigite o número do produto que deseja editar: ");
+    scanf("%d", &numero);
+    limparBuffer();
+
+    if (numero < 1 || numero > contador) {
+        printf("\nNúmero inválido!\n");
+        free(prod);
+        pausar();
+        return;
+    }
+
+    arq = fopen(ARQUIVO_ESTOQUE, "r+b");
+    contador = 0;
+    while (fread(prod, sizeof(Produto), 1, arq) == 1) {
+        if (prod->ativo == 1) {
+            contador++;
+            if (contador == numero) {
+                pos_arquivo = ftell(arq) - sizeof(Produto);
+                break;
+            }
+        }
+    }
+
+    printf("\n► Editando produto: %s\n", prod->nome);
+    printf("----------------------------------------------------\n");
+
+    printf("► Novo nome: ");
+    ler_string(prod->nome, sizeof(prod->nome));
+
+    printf("► Nova categoria: ");
+    ler_string(prod->categoria, sizeof(prod->categoria));
+
+    printf("► Nova quantidade: ");
+    scanf("%d", &prod->quantidade);
+    limparBuffer();
+
+    printf("► Nova validade (dd/mm/aaaa): ");
+    ler_string(prod->validade, sizeof(prod->validade));
+
+    fseek(arq, pos_arquivo, SEEK_SET);
+    fwrite(prod, sizeof(Produto), 1, arq);
+
+    fclose(arq);
+    free(prod);
+
+    printf("\n Produto atualizado com sucesso!\n");
+    pausar();
+}
