@@ -2,37 +2,34 @@
 #include <stdlib.h>
 #include <string.h>
 #include "utils.h"
-#include "cardapio.h"
+#include "estoque.h"
 
-#define ARQUIVO_ITEM "item_cardapio.dat"
+#define ARQUIVO_ESTOQUE "estoque.dat"
 
-
-void menu_cardapio() {
-
+void menu_estoque(){
     limpar_tela();
-    printf("╔══════════════════════════════════════════════════╗\n");
-    printf("║                  MÓDULO CARDÁPIO                 ║\n");
-    printf("╠══════════════════════════════════════════════════╣\n");
-    printf("║                                                  ║\n");
-    printf("║ ► 1. Adicionar Item ao Cardápio                  ║\n");
-    printf("║ ► 2. Remover Item do Cardápio                    ║\n");
-    printf("║ ► 3. Atualizar Item do Cardápio                  ║\n");
-    printf("║ ► 4  pesquisar Item do cardapio                  ║\n");
-    printf("║ ► 5. Visualizar Cardápio                         ║\n");
-    printf("║ ► 0. Voltar ao Menu Principal                    ║\n");
-    printf("║                                                  ║\n");
-    printf("╚══════════════════════════════════════════════════╝\n"); 
-    printf("Escolha uma opção: ");
-
+        printf("╔══════════════════════════════════════════════════╗\n");
+        printf("║               MÓDULO DE ESTOQUE                  ║\n");
+        printf("╠══════════════════════════════════════════════════╣\n");
+        printf("║                                                  ║\n");
+        printf("║ ► 1. Cadastrar Produto                           ║\n");
+        printf("║ ► 2. Editar Produto                              ║\n");
+        printf("║ ► 3. Pesquisar Produto                           ║\n");
+        printf("║ ► 4. Excluir Produto                             ║\n");
+        printf("║                                                  ║\n");
+        printf("║ ► 0. Voltar ao Menu Principal                    ║\n");
+        printf("║                                                  ║\n");
+        printf("╚══════════════════════════════════════════════════╝\n");
+        printf("Escolha uma opção: ");
 }
 
 
 
-int confirma_dados_cardapio(Itemcardapio* item) {
+int confirma_dados_estoque(Produto* prod) {
     char confirm;
     limpar_tela();
-    exibir_item(item);
-    printf("Os dados do item novo do cardapio estão corretos? (S/N): ");
+    exibir_item(prod);
+    printf("Os dados do item novo do estoque estão corretos? (S/N): ");
     scanf(" %c", &confirm);
     limparBuffer();
 
@@ -45,423 +42,322 @@ int confirma_dados_cardapio(Itemcardapio* item) {
 
 
 
-void exibir_item(Itemcardapio* item){
+void exibir_item_estoque(Produto* prod){
 
     printf("╔══════════════════════════════════════════════════╗\n");
     printf("║             ITEM CADASTRADO (VISUALIZAÇÃO)       ║\n");
     printf("╠══════════════════════════════════════════════════╣\n");
-    printf("║ Nome:        %s\n", item->nome);
-    printf("║ Categoria:   %s\n", item->categoria);
-    printf("║ Descrição:   %s\n", item->descricao);
-    printf("║ Preço:       R$ %.2f\n", item->preco);
+    printf("║ Nome:        %s\n", prod->nome);
+    printf("║ Categoria:   %s\n", prod->categoria);
+    printf("║ quantidade:   %i\n", prod->quantidade);
+    printf("║ validade:       %s\n", prod->validade);
     printf("╚══════════════════════════════════════════════════╝\n");
 }
 
 
 
-void gravar_item(Itemcardapio* item){
+void gravar_item_estoque(Produto* prod){
 
 
-    FILE *arq_item = fopen(ARQUIVO_ITEM, "ab");              // Abre o arquivo em modo anexar (append)
+    FILE *arq_item = fopen(ARQUIVO_ESTOQUE, "ab");              // Abre o arquivo em modo anexar (append)
     if (arq_item == NULL) {
         return;
     }
 
-    fwrite(item, sizeof(Itemcardapio), 1, arq_item);
+    fwrite(prod, sizeof(Produto), 1, arq_item);
     fclose(arq_item);
 }
 
 
+void cadastrar_item(){
 
-void cadastrar_item_ao_cardapio() {
-
+    Produto* prod;
     limpar_tela();
-    Itemcardapio* item = (Itemcardapio*) malloc(sizeof(Itemcardapio));
-
     printf("╔══════════════════════════════════════════════════╗\n");
-    printf("║              CADASTRAR ITEM AO CARDÁPIO          ║\n");
-    printf("╚══════════════════════════════════════════════════╝\n");
+    printf("║           CADASTRAR PRODUTO AO ESTOQUE           ║\n");
+    printf("╚══════════════════════════════════════════════════╝\n\n");
 
-    
-     printf("► Nome do Item: ");
-    ler_string(item->nome, sizeof(item->nome));
+    printf("► Nome do Produto: ");
+    ler_string(prod->nome, sizeof(prod->nome));
 
     printf("► Categoria: ");
-    ler_string(item->categoria, sizeof(item->categoria));
+    ler_string(prod->categoria, sizeof(prod->categoria));
 
-    printf("► Descrição: ");
-    ler_string(item->descricao, sizeof(item->descricao));
-
-    printf("► Preço (R$): ");
-    if (scanf("%f", &item->preco) != 1) {
+    printf("► Quantidade inicial: ");
+    if (scanf("%d", &prod->quantidade) != 1 || prod->quantidade < 0) {
         limparBuffer();
-        printf("Preço inválido.\n");
+        printf("\nQuantidade inválida.\n");
         pausar();
         return;
     }
     limparBuffer();
 
-    item->disponivel = 1;
+    printf("► Validade (dd/mm/aaaa): ");
+    ler_string(prod->validade, sizeof(prod->validade));
 
-    if(!confirma_dados_cardapio(item)) {
+    prod->ativo = 1;
+
+    if (!confirma_dados_produto(prod)) {
         printf("\nCadastro cancelado pelo usuário.\n");
-        free(item);
         pausar();
         return;
     }
-    gravar_item(item);
-    printf("\n Item cadastrado com sucesso!\n");
-    free(item);
+
+    gravar_produto(prod);
+    printf("\n Produto cadastrado com sucesso!\n");
     pausar();
 }
 
 
 
-void excluir_item_do_cardapio() {
-    FILE* arq_item;
-    Itemcardapio item;
+void remover_produto() {
+    FILE *arq;
+    Produto *prod = (Produto*) malloc(sizeof(Produto));
     int numero, contador = 0;
     long pos_arquivo;
-    char confirma;
 
     limpar_tela();
     printf("╔══════════════════════════════════════════════════╗\n");
-    printf("║              EXCLUIR ITEM DO CARDÁPIO            ║\n");
-    printf("╚══════════════════════════════════════════════════╝\n");
+    printf("║                 REMOVER PRODUTO DO ESTOQUE        ║\n");
+    printf("╚══════════════════════════════════════════════════╝\n\n");
 
-    arq_item = fopen(ARQUIVO_ITEM, "rb");
-    if (arq_item == NULL) {
-        printf("Nenhum item cadastrado ainda.\n");
+    arq = fopen(ARQUIVO_ESTOQUE, "rb");
+    if (arq == NULL) {
+        printf("Nenhum produto cadastrado ainda.\n");
+        free(prod);
         pausar();
         return;
     }
 
-    printf("Itens cadastrados:\n\n");
-    while (fread(&item, sizeof(Itemcardapio), 1, arq_item) == 1) {
-        if (item.disponivel == 1) {
+    // Exibir produtos ativos
+    printf("Produtos disponíveis:\n\n");
+    while (fread(prod, sizeof(Produto), 1, arq) == 1) {
+        if (prod->ativo == 1) {
             contador++;
-            printf(" %d - %s  (R$ %.2f)\n", contador, item.nome, item.preco);
+            printf(" %d - %s  (Qtd: %d, Validade: %s)\n",
+                   contador, prod->nome, prod->quantidade, prod->validade);
         }
     }
-    fclose(arq_item);
+    fclose(arq);
 
     if (contador == 0) {
-        printf("\nNenhum item ativo encontrado.\n");
+        printf("\nNenhum produto ativo encontrado.\n");
+        free(prod);
         pausar();
         return;
     }
 
-    printf("\nDigite o número do item: ");
+    printf("\nDigite o número do produto que deseja remover: ");
     scanf("%d", &numero);
     limparBuffer();
 
     if (numero < 1 || numero > contador) {
         printf("\nNúmero inválido!\n");
+        free(prod);
         pausar();
         return;
     }
 
-    arq_item = fopen(ARQUIVO_ITEM, "r+b");
+    // Reabrir arquivo para edição
+    arq = fopen(ARQUIVO_ESTOQUE, "r+b");
     contador = 0;
-    while (fread(&item, sizeof(Itemcardapio), 1, arq_item) == 1) {
-        if (item.disponivel == 1) {
+
+    while (fread(prod, sizeof(Produto), 1, arq) == 1) {
+        if (prod->ativo == 1) {
             contador++;
             if (contador == numero) {
-                pos_arquivo = ftell(arq_item) - sizeof(Itemcardapio);
+                pos_arquivo = ftell(arq) - sizeof(Produto);
                 break;
             }
         }
     }
 
-    if (contador < numero) {
-        printf("\nItem não encontrado!\n");
-        fclose(arq_item);
-        pausar();
-        return;
-    }
-    limpar_tela();
-    exibir_item(&item);  // passa o endereço da struct
-
-    printf("Confirmar exclusão? (s/n): ");
-    scanf(" %c", &confirma);  // espaço antes de %c
+    printf("\nConfirmar remoção do produto '%s'? (S/N): ", prod->nome);
+    char resp;
+    scanf(" %c", &resp);
     limparBuffer();
 
-    if (confirma == 's' || confirma == 'S') {
-        item.disponivel = 0;
-        fseek(arq_item, pos_arquivo, SEEK_SET);
-        fwrite(&item, sizeof(Itemcardapio), 1, arq_item);
-        printf("\nItem excluído com sucesso!\n");
+    if (resp == 'S' || resp == 's') {
+        prod->ativo = 0;
+        fseek(arq, pos_arquivo, SEEK_SET);
+        fwrite(prod, sizeof(Produto), 1, arq);
+        printf("\n✅ Produto removido com sucesso!\n");
     } else {
-        printf("\nExclusão cancelada!\n");
+        printf("\nRemoção cancelada.\n");
     }
 
-    fclose(arq_item);
+    fclose(arq);
+    free(prod);
     pausar();
 }
 
 
 
-void editar_item_do_cardapio() {
-    FILE* arq_item;
-    Itemcardapio* item;
+void editar_produto() {
+    FILE *arq;
+    Produto *prod = (Produto*) malloc(sizeof(Produto));
     int numero, contador = 0;
     long pos_arquivo;
 
     limpar_tela();
     printf("╔══════════════════════════════════════════════════╗\n");
-    printf("║              EDITAR ITEM DO CARDÁPIO             ║\n");
-    printf("╚══════════════════════════════════════════════════╝\n");
+    printf("║                EDITAR PRODUTO DO ESTOQUE          ║\n");
+    printf("╚══════════════════════════════════════════════════╝\n\n");
 
-    item = (Itemcardapio*) malloc(sizeof(Itemcardapio));
-    if (item == NULL) {
-        printf("Erro ao alocar memória.\n");
+    arq = fopen(ARQUIVO_ESTOQUE, "rb");
+    if (arq == NULL) {
+        printf("Nenhum produto cadastrado ainda.\n");
+        free(prod);
         pausar();
         return;
     }
 
-    arq_item = fopen(ARQUIVO_ITEM, "rb");
-    if (arq_item == NULL) {
-        printf("Nenhum item cadastrado ainda.\n");
-        free(item);
-        pausar();
-        return;
-    }
-
-    printf("Itens cadastrados:\n\n");
-    while (fread(item, sizeof(Itemcardapio), 1, arq_item) == 1) {
-        if (item->disponivel == 1) {
+    printf("Produtos cadastrados:\n\n");
+    while (fread(prod, sizeof(Produto), 1, arq) == 1) {
+        if (prod->ativo == 1) {
             contador++;
-            printf(" %d - %s  (R$ %.2f)\n", contador, item->nome, item->preco);
+            printf(" %d - %s  (Qtd: %d, Validade: %s)\n",
+                   contador, prod->nome, prod->quantidade, prod->validade);
         }
     }
-    fclose(arq_item);
+    fclose(arq);
 
     if (contador == 0) {
-        printf("\nNenhum item ativo encontrado.\n");
-        free(item);
+        printf("\nNenhum produto ativo encontrado.\n");
+        free(prod);
         pausar();
         return;
     }
 
-    printf("\nDigite o número do item: ");
+    printf("\nDigite o número do produto que deseja editar: ");
     scanf("%d", &numero);
     limparBuffer();
 
     if (numero < 1 || numero > contador) {
         printf("\nNúmero inválido!\n");
-        free(item);
+        free(prod);
         pausar();
         return;
     }
 
-    arq_item = fopen(ARQUIVO_ITEM, "r+b");
+    arq = fopen(ARQUIVO_ESTOQUE, "r+b");
     contador = 0;
-    while (fread(item, sizeof(Itemcardapio), 1, arq_item) == 1) {
-        if (item->disponivel == 1) {
+    while (fread(prod, sizeof(Produto), 1, arq) == 1) {
+        if (prod->ativo == 1) {
             contador++;
             if (contador == numero) {
-                pos_arquivo = ftell(arq_item) - sizeof(Itemcardapio);
+                pos_arquivo = ftell(arq) - sizeof(Produto);
                 break;
             }
         }
     }
 
-    printf("\nNovos dados:\n");
+    printf("\n► Editando produto: %s\n", prod->nome);
+    printf("----------------------------------------------------\n");
 
-    printf("► Nome do Item: ");
-    ler_string(item->nome, sizeof(item->nome));
+    printf("► Novo nome: ");
+    ler_string(prod->nome, sizeof(prod->nome));
 
-    printf("► Categoria: ");
-    ler_string(item->categoria, sizeof(item->categoria));
+    printf("► Nova categoria: ");
+    ler_string(prod->categoria, sizeof(prod->categoria));
 
-    printf("► Descrição: ");
-    ler_string(item->descricao, sizeof(item->descricao));
-
-    printf("► Preço (R$): ");
-    if (scanf("%f", &item->preco) != 1) {
-        limparBuffer();
-        printf("Preço inválido.\n");
-        free(item);
-        fclose(arq_item);
-        pausar();
-        return;
-    }
+    printf("► Nova quantidade: ");
+    scanf("%d", &prod->quantidade);
     limparBuffer();
 
-    if(!confirma_dados_cardapio(item)) {
-        printf("\nCadastro cancelado pelo usuário.\n");
-        free(item);
-        pausar();
-        return;
-    }
+    printf("► Nova validade (dd/mm/aaaa): ");
+    ler_string(prod->validade, sizeof(prod->validade));
 
-    fseek(arq_item, pos_arquivo, SEEK_SET);
-    fwrite(item, sizeof(Itemcardapio), 1, arq_item);
-    fclose(arq_item);
+    fseek(arq, pos_arquivo, SEEK_SET);
+    fwrite(prod, sizeof(Produto), 1, arq);
 
-    printf("\nItem atualizado com sucesso!\n");
-    free(item);
+    fclose(arq);
+    free(prod);
+
+    printf("\n Produto atualizado com sucesso!\n");
     pausar();
 }
 
 
 
-void pesquisar_item_do_cardapio() {
-    FILE* arq_item;
-    Itemcardapio item;
-    int numero, contador = 0;
+void pesquisar_produto() {
+    FILE *arq;
+    Produto *prod = (Produto*) malloc(sizeof(Produto));
+    int numero, contador = 0, encontrado = 0;
 
     limpar_tela();
     printf("╔══════════════════════════════════════════════════╗\n");
-    printf("║             PESQUISAR ITEM DO CARDÁPIO           ║\n");
-    printf("╚══════════════════════════════════════════════════╝\n");
+    printf("║                 PESQUISAR PRODUTO                ║\n");
+    printf("╚══════════════════════════════════════════════════╝\n\n");
 
-    arq_item = fopen(ARQUIVO_ITEM, "rb");
-    if (arq_item == NULL) {
-        printf("Nenhum item cadastrado ainda.\n");
+    arq = fopen(ARQUIVO_ESTOQUE, "rb");
+    if (arq == NULL) {
+        printf("Nenhum produto cadastrado ainda.\n");
+        free(prod);
         pausar();
         return;
     }
 
-    printf("Itens cadastrados:\n\n");
-    while (fread(&item, sizeof(Itemcardapio), 1, arq_item) == 1) {
-        if (item.disponivel == 1) {
+    printf("Produtos disponíveis:\n\n");
+    while (fread(prod, sizeof(Produto), 1, arq) == 1) {
+        if (prod->ativo == 1) {
             contador++;
-            printf(" %d - %s  (R$ %.2f)\n", contador, item.nome, item.preco);
+            printf(" %d - %s  (Qtd: %d)\n", contador, prod->nome, prod->quantidade);
         }
     }
-    fclose(arq_item);
+    fclose(arq);
 
     if (contador == 0) {
-        printf("\nNenhum item ativo encontrado.\n");
+        printf("\nNenhum produto ativo encontrado.\n");
+        free(prod);
         pausar();
         return;
     }
 
-    printf("\nDigite o número do item que deseja visualizar: ");
+    printf("\nDigite o número do produto para ver detalhes: ");
     scanf("%d", &numero);
     limparBuffer();
 
     if (numero < 1 || numero > contador) {
         printf("\nNúmero inválido!\n");
+        free(prod);
         pausar();
         return;
     }
 
-    arq_item = fopen(ARQUIVO_ITEM, "rb");
+    arq = fopen(ARQUIVO_ESTOQUE, "rb");
     contador = 0;
-    while (fread(&item, sizeof(Itemcardapio), 1, arq_item) == 1) {
-        if (item.disponivel == 1) {
+    while (fread(prod, sizeof(Produto), 1, arq) == 1) {
+        if (prod->ativo == 1) {
             contador++;
             if (contador == numero) {
-                limpar_tela();
-                exibir_item(&item);
-                fclose(arq_item);
-                pausar();
-                return;
+                encontrado = 1; // marca que achou o item
             }
         }
+
+        if (encontrado) {
+            limpar_tela();
+            printf("╔══════════════════════════════════════════════════╗\n");
+            printf("║               DETALHES DO PRODUTO                ║\n");
+            printf("╚══════════════════════════════════════════════════╝\n\n");
+
+            printf("► Nome: %s\n", prod->nome);
+            printf("► Categoria: %s\n", prod->categoria);
+            printf("► Quantidade: %d\n", prod->quantidade);
+            printf("► Validade: %s\n", prod->validade);
+            printf("► Status: %s\n", prod->ativo ? "Ativo" : "Inativo");
+
+            printf("\n╚══════════════════════════════════════════════════╝\n");
+            encontrado = 2; // muda o estado para indicar que já mostrou
+        }
     }
 
-    fclose(arq_item);
-    printf("\nItem não encontrado.\n");
+    if (encontrado == 0) {
+        printf("\nProduto não encontrado.\n");
+    }
+
+    fclose(arq);
+    free(prod);
     pausar();
 }
 
-
-
-void exibir_cardapio() {
-    FILE *arq_item;
-    Itemcardapio item;
-    char categoria_atual[50] = "";
-    int encontrou = 0;
-
-    limpar_tela();
-    printf("╔══════════════════════════════════════════════════════════╗\n");
-    printf("║                      CARDÁPIO DO DIA                     ║\n");
-    printf("╠══════════════════════════════════════════════════════════╣\n");
-
-    arq_item = fopen(ARQUIVO_ITEM, "rb");
-    if (arq_item == NULL) {
-        printf("║ Nenhum item cadastrado ainda.                           ║\n");
-        printf("╚══════════════════════════════════════════════════════════╝\n");
-        pausar();
-        return;
-    }
-
-    // Ler arquivo uma vez, em ordem
-    while (fread(&item, sizeof(Itemcardapio), 1, arq_item) == 1) {
-        if (item.disponivel == 0)
-            continue;
-
-        // Quando muda a categoria, imprime título
-        if (strcmp(categoria_atual, item.categoria) != 0) {
-            if (encontrou)
-                printf("╠══════════════════════════════════════════════════════════╣\n");
-
-            strcpy(categoria_atual, item.categoria);
-            printf("║   %-55s║\n", categoria_atual);
-            printf("║ -------------------------------------------------------- ║\n");
-        }
-
-        encontrou = 1;
-
-        // Exibe item formatado
-        char linha[70];
-        snprintf(linha, sizeof(linha), "• %-28s R$ %6.2f", item.nome, item.preco);
-        printf("║ %-59s║\n", linha);
-
-        if (strlen(item.descricao) > 0) {
-            char desc[110];
-            snprintf(desc, sizeof(desc), "↳ %s", item.descricao);
-            printf("║    %-56s║\n", desc);
-        }
-
-        printf("║                                                          ║\n");
-    }
-
-    if (!encontrou) {
-        printf("║ Nenhum item ativo encontrado.                           ║\n");
-    }
-
-    printf("╚══════════════════════════════════════════════════════════╝\n");
-    fclose(arq_item);
-    pausar();
-}
-
-
-
-void cardapio() {
-    int opcao;
-
-    do {
-        menu_cardapio();
-        scanf("%d", &opcao);
-        limparBuffer();
-
-        switch (opcao) {
-            case 1:
-                cadastrar_item_ao_cardapio();
-                break;
-            case 2:
-                excluir_item_do_cardapio();
-                break;
-            case 3:
-                editar_item_do_cardapio();
-                break;
-            case 4:
-                pesquisar_item_do_cardapio();
-                break;
-            case 5:
-                exibir_cardapio();
-                break;
-            case 0:
-                printf("Voltando ao Menu Principal...\n");
-                break;
-            default:
-                printf("Opção inválida! Tente novamente.\n");
-                pausar();
-        }
-
-    } while (opcao != 0);
-}
