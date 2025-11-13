@@ -108,3 +108,86 @@ void cadastrar_item(){
     pausar();
 }
 
+
+
+void remover_produto() {
+    FILE *arq;
+    Produto *prod = (Produto*) malloc(sizeof(Produto));
+    int numero, contador = 0;
+    long pos_arquivo;
+
+    limpar_tela();
+    printf("╔══════════════════════════════════════════════════╗\n");
+    printf("║                 REMOVER PRODUTO DO ESTOQUE        ║\n");
+    printf("╚══════════════════════════════════════════════════╝\n\n");
+
+    arq = fopen(ARQUIVO_ESTOQUE, "rb");
+    if (arq == NULL) {
+        printf("Nenhum produto cadastrado ainda.\n");
+        free(prod);
+        pausar();
+        return;
+    }
+
+    // Exibir produtos ativos
+    printf("Produtos disponíveis:\n\n");
+    while (fread(prod, sizeof(Produto), 1, arq) == 1) {
+        if (prod->ativo == 1) {
+            contador++;
+            printf(" %d - %s  (Qtd: %d, Validade: %s)\n",
+                   contador, prod->nome, prod->quantidade, prod->validade);
+        }
+    }
+    fclose(arq);
+
+    if (contador == 0) {
+        printf("\nNenhum produto ativo encontrado.\n");
+        free(prod);
+        pausar();
+        return;
+    }
+
+    printf("\nDigite o número do produto que deseja remover: ");
+    scanf("%d", &numero);
+    limparBuffer();
+
+    if (numero < 1 || numero > contador) {
+        printf("\nNúmero inválido!\n");
+        free(prod);
+        pausar();
+        return;
+    }
+
+    // Reabrir arquivo para edição
+    arq = fopen(ARQUIVO_ESTOQUE, "r+b");
+    contador = 0;
+
+    while (fread(prod, sizeof(Produto), 1, arq) == 1) {
+        if (prod->ativo == 1) {
+            contador++;
+            if (contador == numero) {
+                pos_arquivo = ftell(arq) - sizeof(Produto);
+                break;
+            }
+        }
+    }
+
+    printf("\nConfirmar remoção do produto '%s'? (S/N): ", prod->nome);
+    char resp;
+    scanf(" %c", &resp);
+    limparBuffer();
+
+    if (resp == 'S' || resp == 's') {
+        prod->ativo = 0;
+        fseek(arq, pos_arquivo, SEEK_SET);
+        fwrite(prod, sizeof(Produto), 1, arq);
+        printf("\n✅ Produto removido com sucesso!\n");
+    } else {
+        printf("\nRemoção cancelada.\n");
+    }
+
+    fclose(arq);
+    free(prod);
+    pausar();
+}
+
