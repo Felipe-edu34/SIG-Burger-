@@ -4,6 +4,8 @@
 #include "utils.h"
 #include "cardapio.h"
 
+#define ARQUIVO_ITEM "item_cardapio.dat"
+
 
 void menu_cardapio() {
 
@@ -48,7 +50,6 @@ void exibir_item(Itemcardapio* item){
     printf("╔══════════════════════════════════════════════════╗\n");
     printf("║             ITEM CADASTRADO (VISUALIZAÇÃO)       ║\n");
     printf("╠══════════════════════════════════════════════════╣\n");
-    printf("║ Código:      %d\n", item->codigo);
     printf("║ Nome:        %s\n", item->nome);
     printf("║ Categoria:   %s\n", item->categoria);
     printf("║ Descrição:   %s\n", item->descricao);
@@ -61,42 +62,13 @@ void exibir_item(Itemcardapio* item){
 void gravar_item(Itemcardapio* item){
 
 
-    FILE *arq_item_cardapio = fopen("item_cardapio.dat", "ab");              // Abre o arquivo em modo anexar (append)
-    if (arq_item_cardapio == NULL) {
+    FILE *arq_item = fopen(ARQUIVO_ITEM, "ab");              // Abre o arquivo em modo anexar (append)
+    if (arq_item == NULL) {
         return;
     }
 
-    fwrite(item, sizeof(Itemcardapio), 1, arq_item_cardapio);
-    fclose(arq_item_cardapio);
-}
-
-
-
-int gerar_codigo() {
-    FILE *arq;
-    int codigo = 1;
-
-    // tenta abrir o arquivo em modo leitura binária
-    arq = fopen("codigo.dat", "rb");
-
-    // se já existir, lê o último código
-    if (arq != NULL) {
-        fread(&codigo, sizeof(int), 1, arq);
-        fclose(arq);
-        codigo++; // incrementa para o próximo
-    }
-
-    // salva o novo código atualizado
-    arq = fopen("codigo.dat", "wb");
-    if (arq == NULL) {
-        printf("Erro ao abrir o arquivo de código.\n");
-        return -1;
-    }
-
-    fwrite(&codigo, sizeof(int), 1, arq);
-    fclose(arq);
-
-    return codigo;
+    fwrite(item, sizeof(Itemcardapio), 1, arq_item);
+    fclose(arq_item);
 }
 
 
@@ -110,20 +82,24 @@ void cadastrar_item_ao_cardapio() {
     printf("║              CADASTRAR ITEM AO CARDÁPIO          ║\n");
     printf("╚══════════════════════════════════════════════════╝\n");
 
-    item->codigo = gerar_codigo();
-    limparBuffer();
-
-    printf("► Nome do Item: ");
-    ler_string(item->nome, 50);
+    
+     printf("► Nome do Item: ");
+    ler_string(item->nome, sizeof(item->nome));
 
     printf("► Categoria: ");
-    ler_string(item->categoria, 30);
+    ler_string(item->categoria, sizeof(item->categoria));
 
     printf("► Descrição: ");
-    ler_string(item->descricao, 100);
+    ler_string(item->descricao, sizeof(item->descricao));
 
     printf("► Preço (R$): ");
-    scanf("%f", &item->preco);
+    if (scanf("%f", &item->preco) != 1) {
+        limparBuffer();
+        printf("Preço inválido.\n");
+        pausar();
+        return;
+    }
+    limparBuffer();
 
     item->disponivel = 1;
 
@@ -141,41 +117,351 @@ void cadastrar_item_ao_cardapio() {
 
 
 
+void excluir_item_do_cardapio() {
+    FILE* arq_item;
+    Itemcardapio item;
+    int numero, contador = 0;
+    long pos_arquivo;
+    char confirma;
+
+    limpar_tela();
+    printf("╔══════════════════════════════════════════════════╗\n");
+    printf("║              EXCLUIR ITEM DO CARDÁPIO            ║\n");
+    printf("╚══════════════════════════════════════════════════╝\n");
+
+    arq_item = fopen(ARQUIVO_ITEM, "rb");
+    if (arq_item == NULL) {
+        printf("Nenhum item cadastrado ainda.\n");
+        pausar();
+        return;
+    }
+
+    printf("Itens cadastrados:\n\n");
+    while (fread(&item, sizeof(Itemcardapio), 1, arq_item) == 1) {
+        if (item.disponivel == 1) {
+            contador++;
+            printf(" %d - %s  (R$ %.2f)\n", contador, item.nome, item.preco);
+        }
+    }
+    fclose(arq_item);
+
+    if (contador == 0) {
+        printf("\nNenhum item ativo encontrado.\n");
+        pausar();
+        return;
+    }
+
+    printf("\nDigite o número do item: ");
+    scanf("%d", &numero);
+    limparBuffer();
+
+    if (numero < 1 || numero > contador) {
+        printf("\nNúmero inválido!\n");
+        pausar();
+        return;
+    }
+
+    arq_item = fopen(ARQUIVO_ITEM, "r+b");
+    contador = 0;
+    while (fread(&item, sizeof(Itemcardapio), 1, arq_item) == 1) {
+        if (item.disponivel == 1) {
+            contador++;
+            if (contador == numero) {
+                pos_arquivo = ftell(arq_item) - sizeof(Itemcardapio);
+                break;
+            }
+        }
+    }
+
+    if (contador < numero) {
+        printf("\nItem não encontrado!\n");
+        fclose(arq_item);
+        pausar();
+        return;
+    }
+    limpar_tela();
+    exibir_item(&item);  // passa o endereço da struct
+
+    printf("Confirmar exclusão? (s/n): ");
+    scanf(" %c", &confirma);  // espaço antes de %c
+    limparBuffer();
+
+    if (confirma == 's' || confirma == 'S') {
+        item.disponivel = 0;
+        fseek(arq_item, pos_arquivo, SEEK_SET);
+        fwrite(&item, sizeof(Itemcardapio), 1, arq_item);
+        printf("\nItem excluído com sucesso!\n");
+    } else {
+        printf("\nExclusão cancelada!\n");
+    }
+
+    fclose(arq_item);
+    pausar();
+}
+
+
+
+void editar_item_do_cardapio() {
+    FILE* arq_item;
+    Itemcardapio* item;
+    int numero, contador = 0;
+    long pos_arquivo;
+
+    limpar_tela();
+    printf("╔══════════════════════════════════════════════════╗\n");
+    printf("║              EDITAR ITEM DO CARDÁPIO             ║\n");
+    printf("╚══════════════════════════════════════════════════╝\n");
+
+    item = (Itemcardapio*) malloc(sizeof(Itemcardapio));
+    if (item == NULL) {
+        printf("Erro ao alocar memória.\n");
+        pausar();
+        return;
+    }
+
+    arq_item = fopen(ARQUIVO_ITEM, "rb");
+    if (arq_item == NULL) {
+        printf("Nenhum item cadastrado ainda.\n");
+        free(item);
+        pausar();
+        return;
+    }
+
+    printf("Itens cadastrados:\n\n");
+    while (fread(item, sizeof(Itemcardapio), 1, arq_item) == 1) {
+        if (item->disponivel == 1) {
+            contador++;
+            printf(" %d - %s  (R$ %.2f)\n", contador, item->nome, item->preco);
+        }
+    }
+    fclose(arq_item);
+
+    if (contador == 0) {
+        printf("\nNenhum item ativo encontrado.\n");
+        free(item);
+        pausar();
+        return;
+    }
+
+    printf("\nDigite o número do item: ");
+    scanf("%d", &numero);
+    limparBuffer();
+
+    if (numero < 1 || numero > contador) {
+        printf("\nNúmero inválido!\n");
+        free(item);
+        pausar();
+        return;
+    }
+
+    arq_item = fopen(ARQUIVO_ITEM, "r+b");
+    contador = 0;
+    while (fread(item, sizeof(Itemcardapio), 1, arq_item) == 1) {
+        if (item->disponivel == 1) {
+            contador++;
+            if (contador == numero) {
+                pos_arquivo = ftell(arq_item) - sizeof(Itemcardapio);
+                break;
+            }
+        }
+    }
+
+    printf("\nNovos dados:\n");
+
+    printf("► Nome do Item: ");
+    ler_string(item->nome, sizeof(item->nome));
+
+    printf("► Categoria: ");
+    ler_string(item->categoria, sizeof(item->categoria));
+
+    printf("► Descrição: ");
+    ler_string(item->descricao, sizeof(item->descricao));
+
+    printf("► Preço (R$): ");
+    if (scanf("%f", &item->preco) != 1) {
+        limparBuffer();
+        printf("Preço inválido.\n");
+        free(item);
+        fclose(arq_item);
+        pausar();
+        return;
+    }
+    limparBuffer();
+
+    if(!confirma_dados_cardapio(item)) {
+        printf("\nCadastro cancelado pelo usuário.\n");
+        free(item);
+        pausar();
+        return;
+    }
+
+    fseek(arq_item, pos_arquivo, SEEK_SET);
+    fwrite(item, sizeof(Itemcardapio), 1, arq_item);
+    fclose(arq_item);
+
+    printf("\nItem atualizado com sucesso!\n");
+    free(item);
+    pausar();
+}
+
+
+
+void pesquisar_item_do_cardapio() {
+    FILE* arq_item;
+    Itemcardapio item;
+    int numero, contador = 0;
+
+    limpar_tela();
+    printf("╔══════════════════════════════════════════════════╗\n");
+    printf("║             PESQUISAR ITEM DO CARDÁPIO           ║\n");
+    printf("╚══════════════════════════════════════════════════╝\n");
+
+    arq_item = fopen(ARQUIVO_ITEM, "rb");
+    if (arq_item == NULL) {
+        printf("Nenhum item cadastrado ainda.\n");
+        pausar();
+        return;
+    }
+
+    printf("Itens cadastrados:\n\n");
+    while (fread(&item, sizeof(Itemcardapio), 1, arq_item) == 1) {
+        if (item.disponivel == 1) {
+            contador++;
+            printf(" %d - %s  (R$ %.2f)\n", contador, item.nome, item.preco);
+        }
+    }
+    fclose(arq_item);
+
+    if (contador == 0) {
+        printf("\nNenhum item ativo encontrado.\n");
+        pausar();
+        return;
+    }
+
+    printf("\nDigite o número do item que deseja visualizar: ");
+    scanf("%d", &numero);
+    limparBuffer();
+
+    if (numero < 1 || numero > contador) {
+        printf("\nNúmero inválido!\n");
+        pausar();
+        return;
+    }
+
+    arq_item = fopen(ARQUIVO_ITEM, "rb");
+    contador = 0;
+    while (fread(&item, sizeof(Itemcardapio), 1, arq_item) == 1) {
+        if (item.disponivel == 1) {
+            contador++;
+            if (contador == numero) {
+                limpar_tela();
+                exibir_item(&item);
+                fclose(arq_item);
+                pausar();
+                return;
+            }
+        }
+    }
+
+    fclose(arq_item);
+    printf("\nItem não encontrado.\n");
+    pausar();
+}
+
+
+
+void exibir_cardapio() {
+    FILE *arq_item;
+    Itemcardapio item;
+    char categoria_atual[50] = "";
+    int encontrou = 0;
+
+    limpar_tela();
+    printf("╔══════════════════════════════════════════════════════════╗\n");
+    printf("║                      CARDÁPIO DO DIA                     ║\n");
+    printf("╠══════════════════════════════════════════════════════════╣\n");
+
+    arq_item = fopen(ARQUIVO_ITEM, "rb");
+    if (arq_item == NULL) {
+        printf("║ Nenhum item cadastrado ainda.                           ║\n");
+        printf("╚══════════════════════════════════════════════════════════╝\n");
+        pausar();
+        return;
+    }
+
+    // Ler arquivo uma vez, em ordem
+    while (fread(&item, sizeof(Itemcardapio), 1, arq_item) == 1) {
+        if (item.disponivel == 0)
+            continue;
+
+        // Quando muda a categoria, imprime título
+        if (strcmp(categoria_atual, item.categoria) != 0) {
+            if (encontrou)
+                printf("╠══════════════════════════════════════════════════════════╣\n");
+
+            strcpy(categoria_atual, item.categoria);
+            printf("║   %-55s║\n", categoria_atual);
+            printf("║ -------------------------------------------------------- ║\n");
+        }
+
+        encontrou = 1;
+
+        // Exibe item formatado
+        char linha[70];
+        snprintf(linha, sizeof(linha), "• %-28s R$ %6.2f", item.nome, item.preco);
+        printf("║ %-59s║\n", linha);
+
+        if (strlen(item.descricao) > 0) {
+            char desc[110];
+            snprintf(desc, sizeof(desc), "↳ %s", item.descricao);
+            printf("║    %-56s║\n", desc);
+        }
+
+        printf("║                                                          ║\n");
+    }
+
+    if (!encontrou) {
+        printf("║ Nenhum item ativo encontrado.                           ║\n");
+    }
+
+    printf("╚══════════════════════════════════════════════════════════╝\n");
+    fclose(arq_item);
+    pausar();
+}
+
+  
+
 void cardapio() {
     int opcao;
 
     do {
         menu_cardapio();
         scanf("%d", &opcao);
+        limparBuffer();
 
         switch (opcao) {
             case 1:
                 cadastrar_item_ao_cardapio();
                 break;
             case 2:
-                printf("Remover Item do Cardápio selecionado.\n");
-                // Chamar função para remover item
+                excluir_item_do_cardapio();
                 break;
             case 3:
-                printf("Atualizar Item do Cardápio selecionado.\n");
-                // Chamar função para atualizar item
+                editar_item_do_cardapio();
                 break;
             case 4:
-                printf("Pesquisar Item do Cardápio selecionado.\n");
-                // Chamar função para pesquisar item
+                pesquisar_item_do_cardapio();
                 break;
             case 5:
-                printf("Visualizar Cardápio selecionado.\n");
-                // Chamar função para visualizar cardápio
+                exibir_cardapio();
                 break;
             case 0:
                 printf("Voltando ao Menu Principal...\n");
                 break;
             default:
                 printf("Opção inválida! Tente novamente.\n");
+                pausar();
         }
-
-        system("pause");
 
     } while (opcao != 0);
 }

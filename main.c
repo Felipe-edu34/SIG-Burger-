@@ -4,6 +4,7 @@
 #include "cardapio.h"
 #include "cliente.h"
 #include "utils.h"
+#include "estoque.h"
 
 void tela_menu_principal() {
 
@@ -47,8 +48,7 @@ int main(void) {
                 cardapio();
                 break;
             case 4:
-                printf("Módulo Estoque selecionado.\n");
-                // Chamar função do módulo Estoque
+                estoque();
                 break;
             case 5:
                 printf("Módulo Financeiro selecionado.\n");
@@ -64,7 +64,7 @@ int main(void) {
             case 0:
                 printf("Saindo do sistema...\n");
                 break;
-                
+
             default:
                 printf("Opção inválida. Tente novamente.\n");
                 pausar();
