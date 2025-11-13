@@ -431,16 +431,6 @@ void exibir_cardapio() {
 
 
 
-
-
-
-
-
-  
-
-
-
-
 void cardapio() {
     int opcao;
 
