@@ -118,7 +118,7 @@ void remover_produto() {
 
     limpar_tela();
     printf("╔══════════════════════════════════════════════════╗\n");
-    printf("║                 REMOVER PRODUTO DO ESTOQUE        ║\n");
+    printf("║              REMOVER PRODUTO DO ESTOQUE          ║\n");
     printf("╚══════════════════════════════════════════════════╝\n\n");
 
     arq = fopen(ARQUIVO_ESTOQUE, "rb");
@@ -201,7 +201,7 @@ void editar_produto() {
 
     limpar_tela();
     printf("╔══════════════════════════════════════════════════╗\n");
-    printf("║                EDITAR PRODUTO DO ESTOQUE          ║\n");
+    printf("║             EDITAR PRODUTO DO ESTOQUE            ║\n");
     printf("╚══════════════════════════════════════════════════╝\n\n");
 
     arq = fopen(ARQUIVO_ESTOQUE, "rb");
@@ -376,13 +376,13 @@ void estoque() {
                 cadastrar_produto();
                 break;
             case 2:
-                remover_produto();
+                editar_produto();
                 break;
             case 3:
                 editar_produto();
                 break;
             case 4:
-                pesquisar_produto();
+                remover_produto();
                 break;
             case 0:
                 printf("\nVoltando ao Menu Principal...\n");
