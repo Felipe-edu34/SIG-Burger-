@@ -361,3 +361,42 @@ void pesquisar_produto() {
     pausar();
 }
 
+
+
+void estoque() {
+    int opcao;
+
+    do {
+        menu_estoque();
+        scanf("%d", &opcao);
+        limparBuffer();
+
+        switch (opcao) {
+            case 1:
+                cadastrar_produto();
+                break;
+            case 2:
+                remover_produto();
+                break;
+            case 3:
+                editar_produto();
+                break;
+            case 4:
+                pesquisar_produto();
+                break;
+            case 5:
+                exibir_estoque();
+                break;
+            case 0:
+                printf("\nVoltando ao Menu Principal...\n");
+                pausar();
+                break;
+            default:
+                printf("\nOpção inválida! Tente novamente.\n");
+                pausar();
+                break;
+        }
+
+    } while (opcao != 0);
+}
+
