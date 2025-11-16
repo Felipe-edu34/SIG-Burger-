@@ -7,7 +7,6 @@
 #include "cliente.h"
 #include "cardapio.h"
 
-#define ARQUIVO_ITEM "item_cardapio.dat"
 
 void menu_relatorio(){
     limpar_tela();
@@ -42,7 +41,7 @@ void exibir_cardapio_relatorio() {
     printf("║                          CARDÁPIO                        ║\n");
     printf("╠══════════════════════════════════════════════════════════╣\n");
 
-    arq_item = fopen(ARQUIVO_ITEM, "rb");
+    arq_item = fopen("item_cardapio.dat", "rb");
     if (arq_item == NULL) {
         printf("║ Nenhum item cadastrado ainda.                           ║\n");
         printf("╚══════════════════════════════════════════════════════════╝\n");
@@ -88,6 +87,38 @@ void exibir_cardapio_relatorio() {
     printf("╚══════════════════════════════════════════════════════════╝\n");
     fclose(arq_item);
     pausar();
+}
+
+
+
+void relatorio_cardapio_itens_disponiveis() {
+
+    limpar_tela();
+    printf("╔══════════════════════════════════════════════════╗\n");
+    printf("║           ITEM DISPONIVEIS NO CARDAPIO           ║\n");
+    printf("╚══════════════════════════════════════════════════╝\n");
+
+    Itemcardapio* item = (Itemcardapio*) malloc(sizeof(Itemcardapio));
+    FILE* arq_cardapio = fopen("item_cardapio.dat","rb");
+    if (arq_cardapio == NULL) {
+        printf("Erro ao abrir o arquivo de cardapio.\n");
+        limparBuffer();
+        return;
+    }
+    while (fread(item, sizeof(Cliente), 1, arq_cardapio) == 1) {
+        if(item->disponivel == 1){
+        exibir_item(item);
+        }
+    }
+    fclose(arq_cardapio);
+    free(item);
+    pausar();
+
+    
+
+
+
+
 }
 
 
