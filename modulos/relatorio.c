@@ -27,6 +27,23 @@ void menu_relatorio(){
 
 
 
+void relatorio_cardapio() {
+    limpar_tela();
+    printf("╔══════════════════════════════════════════════════╗\n");
+    printf("║               RELATÓRIO D0 CARDÁPIO              ║\n");
+    printf("╠══════════════════════════════════════════════════╣\n");
+    printf("║                                                  ║\n");
+    printf("║ ► 1. exibir cardapio                             ║\n");
+    printf("║ ► 2. Itens disponíveis                           ║\n");
+    printf("║ ► 3. Itens indisponíveis                         ║\n");
+    printf("║ ► 4. procurar item por categoria                 ║\n");
+    printf("║                                                  ║\n");
+    printf("╚══════════════════════════════════════════════════╝\n");
+    
+}
+
+
+
 void relatorio() {
     int opcao;
 
