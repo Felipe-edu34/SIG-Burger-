@@ -44,6 +44,23 @@ void relatorio_cardapio() {
 
 
 
+void relatorio_estoque() {
+    limpar_tela();
+    printf("╔══════════════════════════════════════════════════╗\n");
+    printf("║               RELATÓRIO DO ESTOQUE               ║\n");
+    printf("╠══════════════════════════════════════════════════╣\n");
+    printf("║                                                  ║\n");
+    printf("║ ► 1. exibir estoque completo                     ║\n");
+    printf("║ ► 2. Itens com baixa quantidade                  ║\n");
+    printf("║ ► 3. Itens indisponíveis                         ║\n");
+    printf("║ ► 4. Itens por categoria                         ║\n");
+    printf("║                                                  ║\n");
+    printf("╚══════════════════════════════════════════════════╝\n");
+    
+}   
+
+
+
 void relatorio() {
     int opcao;
 
