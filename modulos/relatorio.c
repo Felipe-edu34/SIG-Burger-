@@ -142,7 +142,7 @@ void relatorio_cardapio_itens_indisponiveis() {
 
 
 
-void procurar_item_por_categoria(){
+void procurar_item_por_categoria() {
 
     char categoria_lida[15];
     Itemcardapio* item = (Itemcardapio*) malloc(sizeof(Itemcardapio));
@@ -162,11 +162,15 @@ void procurar_item_por_categoria(){
         return;
     }
 
-    while (fread(item, sizeof(Cliente), 1, arq_cardapio) == 1) {
+    while (fread(item, sizeof(Itemcardapio), 1, arq_cardapio) == 1) {
         if (strstr(item->categoria, categoria_lida) != NULL) {
             exibir_item(item);
         }
     }
+    fclose(arq_cardapio);
+    free(item);
+    pausar();
+
 
 }
 
