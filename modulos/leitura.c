@@ -73,6 +73,17 @@ float ler_preco(float *preco) {
 
 
 
+void ler_quantidade(int *quantidade) {
+    printf("► Quantidade: ");
+    scanf("%d", quantidade);
+    limparBuffer();
+}
+
+
+
+
+
+
 
 
 

@@ -3,6 +3,7 @@
 #include <string.h>
 #include "utils.h"
 #include "estoque.h"
+#include "leitura.h"
 
 #define ARQUIVO_ESTOQUE "estoque.dat"
 
@@ -69,6 +70,7 @@ void gravar_item_estoque(Produto* prod){
 }
 
 
+
 void cadastrar_produto(){
 
     Produto* prod = (Produto*) malloc(sizeof(Produto));
@@ -77,24 +79,10 @@ void cadastrar_produto(){
     printf("║           CADASTRAR PRODUTO AO ESTOQUE           ║\n");
     printf("╚══════════════════════════════════════════════════╝\n\n");
 
-    printf("► Nome do Produto: ");
-    ler_string(prod->nome, sizeof(prod->nome));
-
-    printf("► Categoria: ");
-    ler_string(prod->categoria, sizeof(prod->categoria));
-
-    printf("► Quantidade inicial: ");
-    if (scanf("%d", &prod->quantidade) != 1 || prod->quantidade < 0) {
-        limparBuffer();
-        printf("\nQuantidade inválida.\n");
-        pausar();
-        return;
-    }
-    limparBuffer();
-
-    printf("► Validade (dd/mm/aaaa): ");
-    ler_string(prod->validade, sizeof(prod->validade));
-
+    ler_nome_produto(prod->nome);
+    ler_categoria_estoque(prod->categoria);
+    ler_quantidade(&prod->quantidade);
+    ler_validade(prod->validade);
     prod->ativo = 1;
 
     if (!confirma_dados_estoque(prod)) {
@@ -255,18 +243,10 @@ void editar_produto() {
     printf("\n► Editando produto: %s\n", prod->nome);
     printf("----------------------------------------------------\n");
 
-    printf("► Novo nome: ");
-    ler_string(prod->nome, sizeof(prod->nome));
-
-    printf("► Nova categoria: ");
-    ler_string(prod->categoria, sizeof(prod->categoria));
-
-    printf("► Nova quantidade: ");
-    scanf("%d", &prod->quantidade);
-    limparBuffer();
-
-    printf("► Nova validade (dd/mm/aaaa): ");
-    ler_string(prod->validade, sizeof(prod->validade));
+    ler_nome_produto(prod->nome);
+    ler_categoria_estoque(prod->categoria);
+    ler_quantidade(&prod->quantidade);
+    ler_validade(prod->validade);
 
     fseek(arq, pos_arquivo, SEEK_SET);
     fwrite(prod, sizeof(Produto), 1, arq);
