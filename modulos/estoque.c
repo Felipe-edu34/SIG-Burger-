@@ -69,6 +69,7 @@ void gravar_item_estoque(Produto* prod){
 }
 
 
+
 void cadastrar_produto(){
 
     Produto* prod = (Produto*) malloc(sizeof(Produto));
@@ -77,24 +78,10 @@ void cadastrar_produto(){
     printf("║           CADASTRAR PRODUTO AO ESTOQUE           ║\n");
     printf("╚══════════════════════════════════════════════════╝\n\n");
 
-    printf("► Nome do Produto: ");
-    ler_string(prod->nome, sizeof(prod->nome));
-
-    printf("► Categoria: ");
-    ler_string(prod->categoria, sizeof(prod->categoria));
-
-    printf("► Quantidade inicial: ");
-    if (scanf("%d", &prod->quantidade) != 1 || prod->quantidade < 0) {
-        limparBuffer();
-        printf("\nQuantidade inválida.\n");
-        pausar();
-        return;
-    }
-    limparBuffer();
-
-    printf("► Validade (dd/mm/aaaa): ");
-    ler_string(prod->validade, sizeof(prod->validade));
-
+    ler_nome_produto(prod->nome);
+    ler_categoria_estoque(prod->categoria);
+    ler_quantidade(&prod->quantidade);
+    ler_validade(prod->validade);
     prod->ativo = 1;
 
     if (!confirma_dados_estoque(prod)) {
