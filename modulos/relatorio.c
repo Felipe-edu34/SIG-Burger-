@@ -189,6 +189,32 @@ void relatorio_cardapio() {
 
 
 
+void exibir_todo_o_estoque(){
+
+    Produto* prod = (Produto*) malloc(sizeof(Produto));
+    limpar_tela();
+    printf("╔══════════════════════════════════════════════════╗\n");
+    printf("║          EXIBIR TODOS OS ITENS DO ESTOQUE        ║\n");
+    printf("╚══════════════════════════════════════════════════╝\n");
+
+    FILE* arq_estoque = fopen("item_estoque.dat","rb");
+    if (arq_estoque == NULL) {
+        printf("Erro ao abrir o arquivo de estoque.\n");
+        limparBuffer();
+        return;
+    }
+
+    while (fread(prod, sizeof(Produto), 1, arq_estoque) == 1) {
+        exibir_item_estoque(prod);
+    }
+
+
+    fclose(arq_estoque);
+    free(prod);
+    pausar();
+}
+
+
 void relatorio_estoque() {
     limpar_tela();
     printf("╔══════════════════════════════════════════════════╗\n");
