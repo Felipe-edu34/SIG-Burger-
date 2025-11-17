@@ -4,6 +4,8 @@
 #include "utils.h"
 #include "estoque.h"
 #include "cardapio.h"
+#include "leitura.h"
+#include "valida.h"
 
 
 void ler_categoria_cardapio(char *categoria) {
@@ -60,15 +62,13 @@ void ler_validade(char *validade) {
 
 
 
-void ler_preco(float *preco) {
+float ler_preco(float *preco) {
     do {
     printf("► Preço (R$): ");
-    if (scanf("%f", preco) != 1) {
-        limparBuffer();
-        *preco = -1; // valor inválido
-    }
+    scanf("%f", preco);
     limparBuffer();
-    } while (!valida_preco(*preco));
+    } while (!valida_preco(preco));
+    return *preco;
 }
 
 
