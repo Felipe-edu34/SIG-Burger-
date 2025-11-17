@@ -370,7 +370,7 @@ void relatorio() {
                             exibir_itens_indisponiveis();
                             break;
                         case 4:
-                            exibir_itens_por_categoria();
+                            exibir_itens_por_nome();
                             break;
                         case 0:
                             printf("Voltando ao Menu de Relatórios...\n");
