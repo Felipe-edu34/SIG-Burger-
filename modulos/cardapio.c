@@ -378,7 +378,7 @@ void exibir_cardapio() {
 
     limpar_tela();
     printf("╔══════════════════════════════════════════════════════════╗\n");
-    printf("║                      CARDÁPIO DO DIA                     ║\n");
+    printf("║                          CARDÁPIO                        ║\n");
     printf("╠══════════════════════════════════════════════════════════╣\n");
 
     arq_item = fopen(ARQUIVO_ITEM, "rb");

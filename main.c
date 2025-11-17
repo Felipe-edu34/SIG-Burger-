@@ -5,6 +5,8 @@
 #include "cliente.h"
 #include "utils.h"
 #include "estoque.h"
+#include "relatorio.h"
+
 
 void tela_menu_principal() {
 
@@ -55,7 +57,7 @@ int main(void) {
                 // Chamar função do módulo Financeiro
                 break;
             case 6:
-                printf("Modulo relatorio selecionado");
+                relatorio();
                 break;
             case 7:
                 printf("Sobre o SIG-Burger selecionado.\n");
