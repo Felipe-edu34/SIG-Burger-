@@ -51,12 +51,29 @@ void ler_descricao_item_cardapio(char *descricao) {
 
 
 
-void ler_validade_produto(char *validade) {
+void ler_validade(char *validade) {
     do {
     printf("► Validade (dd/mm/aaaa): ");
     ler_string(validade, 11);
     } while (!valida_data(validade));
 }
+
+
+
+void ler_preco(float *preco) {
+    do {
+    printf("► Preço (R$): ");
+    if (scanf("%f", preco) != 1) {
+        limparBuffer();
+        *preco = -1; // valor inválido
+    }
+    limparBuffer();
+    } while (!valida_preco(*preco));
+}
+
+
+
+
 
 
 
