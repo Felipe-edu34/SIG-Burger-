@@ -77,3 +77,13 @@ int valida_preco(float* preco) {
 }
 
 
+
+int valida_quantidade(int* quantidade) {
+    if (*quantidade < 0) {
+        return 0;
+    }
+
+    return 1;
+}
+
+
