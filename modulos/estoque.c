@@ -50,8 +50,8 @@ void exibir_item_estoque(Produto* prod){
     printf("╠══════════════════════════════════════════════════╣\n");
     printf("║ Nome:        %s\n", prod->nome);
     printf("║ Categoria:   %s\n", prod->categoria);
-    printf("║ quantidade:   %i\n", prod->quantidade);
-    printf("║ validade:       %s\n", prod->validade);
+    printf("║ Quantidade:  %i\n", prod->quantidade);
+    printf("║ Validade:    %s\n", prod->validade);
     printf("╚══════════════════════════════════════════════════╝\n");
 }
 
