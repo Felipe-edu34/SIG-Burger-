@@ -6,6 +6,7 @@
 #include "utils.h"
 #include "estoque.h"
 #include "relatorio.h"
+#include "financeiro.h"
 
 
 void tela_menu_principal() {
@@ -53,8 +54,7 @@ int main(void) {
                 estoque();
                 break;
             case 5:
-                printf("Módulo Financeiro selecionado.\n");
-                // Chamar função do módulo Financeiro
+                financeiro();
                 break;
             case 6:
                 relatorio();
