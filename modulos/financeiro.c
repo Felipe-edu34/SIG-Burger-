@@ -367,3 +367,40 @@ void relatorio_financeiro() {
 
     pausar();
 }
+
+void financeiro() {
+    int opcao;
+
+    do {
+        menu_financeiro();
+        scanf("%d", &opcao);
+        limparBuffer();
+
+        switch (opcao) {
+            case 1:
+                cadastrar_transacao();
+                break;
+            case 2:
+                listar_transacoes();
+                break;
+            case 3:
+                editar_transacao();
+                break;
+            case 4:
+                excluir_transacao();
+                break;
+            case 5:
+                relatorio_financeiro();
+                break;
+            case 0:
+                printf("\nVoltando ao Menu Principal...\n");
+                pausar();
+                break;
+            default:
+                printf("\nOpção inválida! Tente novamente.\n");
+                pausar();
+                break;
+        }
+
+    } while (opcao != 0);
+}
