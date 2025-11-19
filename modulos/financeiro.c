@@ -37,3 +37,15 @@ int confirma_dados_transacao(Transacao* trans) {
         return 0;
     }
 }
+
+void exibir_transacao(Transacao* trans) {
+    printf("╔══════════════════════════════════════════════════╗\n");
+    printf("║            DETALHES DA TRANSAÇÃO                 ║\n");
+    printf("╠══════════════════════════════════════════════════╣\n");
+    printf("║ Descrição:   %s\n", trans->descricao);
+    printf("║ Tipo:        %s\n", trans->tipo);
+    printf("║ Categoria:   %s\n", trans->categoria);
+    printf("║ Valor:       R$ %.2f\n", trans->valor);
+    printf("║ Data:        %s\n", trans->data);
+    printf("╚══════════════════════════════════════════════════╝\n");
+}
