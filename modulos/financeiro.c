@@ -312,3 +312,58 @@ void excluir_transacao() {
     fclose(arq);
     pausar();
 }
+
+void relatorio_financeiro() {
+    FILE *arq;
+    Transacao trans;
+    float total_receitas = 0.0;
+    float total_despesas = 0.0;
+    float saldo = 0.0;
+
+    limpar_tela();
+    printf("╔══════════════════════════════════════════════════╗\n");
+    printf("║             RELATÓRIO FINANCEIRO                 ║\n");
+    printf("╚══════════════════════════════════════════════════╝\n\n");
+
+    arq = fopen(ARQUIVO_FINANCEIRO, "rb");
+    if (arq == NULL) {
+        printf("Nenhuma transação cadastrada ainda.\n");
+        pausar();
+        return;
+    }
+
+    while (fread(&trans, sizeof(Transacao), 1, arq) == 1) {
+        if (trans.ativo == 1) {
+            if (strcmp(trans.tipo, "Receita") == 0 || strcmp(trans.tipo, "receita") == 0) {
+                total_receitas += trans.valor;
+            } else if (strcmp(trans.tipo, "Despesa") == 0 || strcmp(trans.tipo, "despesa") == 0) {
+                total_despesas += trans.valor;
+            }
+        }
+    }
+
+    fclose(arq);
+
+    saldo = total_receitas - total_despesas;
+
+    printf("╔══════════════════════════════════════════════════╗\n");
+    printf("║                     RESUMO                       ║\n");
+    printf("╠══════════════════════════════════════════════════╣\n");
+    printf("║                                                  ║\n");
+    printf("║ Total de Receitas:    R$ %10.2f             ║\n", total_receitas);
+    printf("║ Total de Despesas:    R$ %10.2f             ║\n", total_despesas);
+    printf("║ ------------------------------------------------ ║\n");
+    printf("║ Saldo:                R$ %10.2f             ║\n", saldo);
+    printf("║                                                  ║\n");
+    printf("╚══════════════════════════════════════════════════╝\n");
+
+    if (saldo > 0) {
+        printf("\n✓ Resultado: LUCRO\n");
+    } else if (saldo < 0) {
+        printf("\n✗ Resultado: PREJUÍZO\n");
+    } else {
+        printf("\n= Resultado: EQUILIBRADO\n");
+    }
+
+    pausar();
+}
