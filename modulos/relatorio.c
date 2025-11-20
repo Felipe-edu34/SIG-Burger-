@@ -384,18 +384,17 @@ void relatorio() {
                             exibir_itens_por_nome();
                             break;
                         case 0:
-                            printf("Voltando ao Menu de Relatórios...\n");
-                            break;
                         default:
                             printf("Opção inválida! Tente novamente.\n");
                     }
+
                 } while (opcao_estoque != 0);
                 break;
             case 0:
                 break;
+                
             default:
                 printf("Opção inválida! Tente novamente.\n");
         }
-        pausar();
     } while (opcao != 0);
 }
