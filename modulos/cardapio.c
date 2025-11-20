@@ -254,65 +254,22 @@ void editar_item_do_cardapio() {
 
 
 void pesquisar_item_do_cardapio() {
-    FILE* arq_item;
-    Itemcardapio item;
-    int numero, contador = 0;
+    
 
     limpar_tela();
     printf("╔══════════════════════════════════════════════════╗\n");
     printf("║             PESQUISAR ITEM DO CARDÁPIO           ║\n");
     printf("╚══════════════════════════════════════════════════╝\n");
 
-    arq_item = fopen(ARQUIVO_ITEM, "rb");
-    if (arq_item == NULL) {
-        printf("Nenhum item cadastrado ainda.\n");
-        pausar();
-        return;
-    }
+    ResultadoBuscacardapio r = selecionar_produto_cardapio();
+    if (!r.existe) { pausar(); return; }
 
-    printf("Itens cadastrados:\n\n");
-    while (fread(&item, sizeof(Itemcardapio), 1, arq_item) == 1) {
-        if (item.disponivel == 1) {
-            contador++;
-            printf(" %d - %s  (R$ %.2f)\n", contador, item.nome, item.preco);
-        }
-    }
-    fclose(arq_item);
-
-    if (contador == 0) {
-        printf("\nNenhum item ativo encontrado.\n");
-        pausar();
-        return;
-    }
-
-    printf("\nDigite o número do item que deseja visualizar: ");
-    scanf("%d", &numero);
-    limparBuffer();
-
-    if (numero < 1 || numero > contador) {
-        printf("\nNúmero inválido!\n");
-        pausar();
-        return;
-    }
-
-    arq_item = fopen(ARQUIVO_ITEM, "rb");
-    contador = 0;
-    while (fread(&item, sizeof(Itemcardapio), 1, arq_item) == 1) {
-        if (item.disponivel == 1) {
-            contador++;
-            if (contador == numero) {
-                limpar_tela();
-                exibir_item(&item);
-                fclose(arq_item);
-                pausar();
-                return;
-            }
-        }
-    }
-
-    fclose(arq_item);
-    printf("\nItem não encontrado.\n");
+    limpar_tela();
+    printf("\n► Detalhes do item do cardapio:\n");
+    exibir_item(r.item);
+    free(r.item);
     pausar();
+
 }
 
 
