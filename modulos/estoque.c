@@ -5,7 +5,7 @@
 #include "estoque.h"
 #include "leitura.h"
 
-#define ARQUIVO_ESTOQUE "estoque.dat"
+#define ARQUIVO_ESTOQUE "dados/estoque.dat"
 
 void menu_estoque(){
     limpar_tela();

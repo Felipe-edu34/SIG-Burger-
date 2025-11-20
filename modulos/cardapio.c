@@ -5,7 +5,7 @@
 #include "cardapio.h"
 #include "leitura.h"
 
-#define ARQUIVO_ITEM "item_cardapio.dat"
+#define ARQUIVO_ITEM "dados/item_cardapio.dat"
 
 
 void menu_cardapio() {

@@ -7,6 +7,9 @@
 #include "cliente.h"
 #include "cardapio.h"
 
+#define ARQUIVO_ITEM "dados/item_cardapio.dat"
+#define ARQUIVO_ESTOQUE "dados/estoque.dat"
+
 
 void menu_relatorio(){
     limpar_tela();
@@ -41,7 +44,7 @@ void exibir_cardapio_relatorio() {
     printf("║                          CARDÁPIO                        ║\n");
     printf("╠══════════════════════════════════════════════════════════╣\n");
 
-    arq_item = fopen("item_cardapio.dat", "rb");
+    arq_item = fopen(ARQUIVO_ITEM, "rb");
     if (arq_item == NULL) {
         printf("║ Nenhum item cadastrado ainda.                           ║\n");
         printf("╚══════════════════════════════════════════════════════════╝\n");
@@ -99,13 +102,13 @@ void relatorio_cardapio_itens_disponiveis() {
     printf("╚══════════════════════════════════════════════════╝\n");
 
     Itemcardapio* item = (Itemcardapio*) malloc(sizeof(Itemcardapio));
-    FILE* arq_cardapio = fopen("item_cardapio.dat","rb");
+    FILE* arq_cardapio = fopen(ARQUIVO_ITEM,"rb");
     if (arq_cardapio == NULL) {
         printf("Erro ao abrir o arquivo de cardapio.\n");
         limparBuffer();
         return;
     }
-    while (fread(item, sizeof(Cliente), 1, arq_cardapio) == 1) {
+    while (fread(item, sizeof(Itemcardapio), 1, arq_cardapio) == 1) {
         if(item->disponivel == 1){
         exibir_item(item);
         }
@@ -124,13 +127,13 @@ void relatorio_cardapio_itens_indisponiveis() {
     printf("╚══════════════════════════════════════════════════╝\n");
 
     Itemcardapio* item = (Itemcardapio*) malloc(sizeof(Itemcardapio));
-    FILE* arq_cardapio = fopen("item_cardapio.dat","rb");
+    FILE* arq_cardapio = fopen(ARQUIVO_ITEM,"rb");
     if (arq_cardapio == NULL) {
         printf("Erro ao abrir o arquivo de cardapio.\n");
         limparBuffer();
         return;
     }
-    while (fread(item, sizeof(Cliente), 1, arq_cardapio) == 1) {
+    while (fread(item, sizeof(Itemcardapio), 1, arq_cardapio) == 1) {
         if(item->disponivel == 1){
         exibir_item(item);
         }
@@ -155,7 +158,7 @@ void procurar_item_por_categoria() {
     ler_string(categoria_lida, 15);
 
     limpar_tela();
-    FILE* arq_cardapio = fopen("item_cardapio.dat","rb");
+    FILE* arq_cardapio = fopen(ARQUIVO_ITEM,"rb");
     if (arq_cardapio == NULL) {
         printf("Erro ao abrir o arquivo de cardapio.\n");
         limparBuffer();
@@ -202,7 +205,7 @@ void exibir_todo_o_estoque(){
     printf("║          EXIBIR TODOS OS ITENS DO ESTOQUE        ║\n");
     printf("╚══════════════════════════════════════════════════╝\n");
 
-    FILE* arq_estoque = fopen("estoque.dat","rb");
+    FILE* arq_estoque = fopen(ARQUIVO_ESTOQUE,"rb");
     if (arq_estoque == NULL) {
         printf("Erro ao abrir o arquivo de estoque.\n");
         limparBuffer();
@@ -229,7 +232,7 @@ void exibir_itens_com_baixa_quantidade() {
     printf("║        ITENS COM BAIXA QUANTIDADE NO ESTOQUE     ║\n");
     printf("╚══════════════════════════════════════════════════╝\n");
 
-    FILE* arq_estoque = fopen("estoque.dat","rb");
+    FILE* arq_estoque = fopen(ARQUIVO_ESTOQUE,"rb");
     if (arq_estoque == NULL) {
         printf("Erro ao abrir o arquivo de estoque.\n");
         limparBuffer();
@@ -256,7 +259,7 @@ void exibir_itens_indisponiveis_estoque() {
     printf("║        ITENS INDISPONIVEIS NO ESTOQUE            ║\n");
     printf("╚══════════════════════════════════════════════════╝\n");
 
-    FILE* arq_estoque = fopen("estoque.dat","rb");
+    FILE* arq_estoque = fopen(ARQUIVO_ESTOQUE,"rb");
     if (arq_estoque == NULL) {
         printf("Erro ao abrir o arquivo de estoque.\n");
         limparBuffer();
@@ -287,7 +290,7 @@ void exibir_itens_por_nome() {
     ler_string(nome_lido, 30);
 
     limpar_tela();
-    FILE* arq_estoque = fopen("estoque.dat","rb");
+    FILE* arq_estoque = fopen(ARQUIVO_ESTOQUE,"rb");
     if (arq_estoque == NULL) {
         printf("Erro ao abrir o arquivo de estoque.\n");
         limparBuffer();

@@ -1,12 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include "cardapio.h"
 #include "cliente.h"
 #include "utils.h"
 #include "estoque.h"
 #include "relatorio.h"
 #include "financeiro.h"
+
 
 
 void tela_menu_principal() {
@@ -62,6 +64,8 @@ void sobre_o_sistema() {
 
 int main(void) {
     int opcao;
+    tela_inicial();
+    sleep(2);
 
     do {
         tela_menu_principal();
@@ -94,7 +98,16 @@ int main(void) {
                 break;
 
             case 0:
-                printf("Saindo do sistema...\n");
+                limpar_tela();
+                printf("╔══════════════════════════════════════════════════════════════╗\n");
+                printf("║                                                              ║\n");
+                printf("║          Obrigado por utilizar o sistema SIG-BURGER!         ║\n");
+                printf("║                                                              ║\n");
+                printf("║   Desenvolvido com dedicação e fome por conhecimento.        ║\n");
+                printf("║   Volte sempre — a casa é sua e o código também!             ║\n");
+                printf("║                                                              ║\n");
+                printf("╚══════════════════════════════════════════════════════════════╝\n");
+                return 0;
                 break;
 
             default:
@@ -104,5 +117,5 @@ int main(void) {
         }
 
     } while (opcao != 0);
-    return 0;
+
 }
