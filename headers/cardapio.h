@@ -11,7 +11,7 @@ typedef struct {
 
 typedef struct {
     long pos;        // posição no arquivo
-    Itemcardapio item;   // ponteiro para o produto encontrado
+    Itemcardapio *item;   // ponteiro para o produto encontrado
     int existe;      // 1 = encontrado, 0 = não
 } ResultadoBuscacardapio;
 
