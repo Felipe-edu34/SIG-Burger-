@@ -3,6 +3,7 @@
 #include <string.h>
 #include "utils.h"
 #include "cardapio.h"
+#include "leitura.h"
 
 #define ARQUIVO_ITEM "item_cardapio.dat"
 
@@ -222,109 +223,32 @@ void excluir_item_do_cardapio() {
 
 
 
-
-
 void editar_item_do_cardapio() {
-    FILE* arq_item;
-    Itemcardapio* item;
-    int numero, contador = 0;
-    long pos_arquivo;
+    
 
     limpar_tela();
     printf("╔══════════════════════════════════════════════════╗\n");
     printf("║              EDITAR ITEM DO CARDÁPIO             ║\n");
     printf("╚══════════════════════════════════════════════════╝\n");
 
-    item = (Itemcardapio*) malloc(sizeof(Itemcardapio));
-    if (item == NULL) {
-        printf("Erro ao alocar memória.\n");
-        pausar();
-        return;
-    }
+    ResultadoBuscacardapio r = selecionar_produto_cardapio();
+    if (!r.existe) { pausar(); return; }
+    limpar_tela();
+    
+    ler_nome_produto(r.item->nome);
+    ler_categoria_item(r.item->categoria);
+    ler_descricao_item(r.item->descricao);
+    ler_preco_item(&r.item->preco);
+    FILE *arq = fopen(ARQUIVO_ITEM, "r+b");
+    fseek(arq, r.pos, SEEK_SET);
+    fwrite(r.item, sizeof(Itemcardapio), 1, arq);
+    fclose(arq);
+    free(r.item);
 
-    arq_item = fopen(ARQUIVO_ITEM, "rb");
-    if (arq_item == NULL) {
-        printf("Nenhum item cadastrado ainda.\n");
-        free(item);
-        pausar();
-        return;
-    }
-
-    printf("Itens cadastrados:\n\n");
-    while (fread(item, sizeof(Itemcardapio), 1, arq_item) == 1) {
-        if (item->disponivel == 1) {
-            contador++;
-            printf(" %d - %s  (R$ %.2f)\n", contador, item->nome, item->preco);
-        }
-    }
-    fclose(arq_item);
-
-    if (contador == 0) {
-        printf("\nNenhum item ativo encontrado.\n");
-        free(item);
-        pausar();
-        return;
-    }
-
-    printf("\nDigite o número do item: ");
-    scanf("%d", &numero);
-    limparBuffer();
-
-    if (numero < 1 || numero > contador) {
-        printf("\nNúmero inválido!\n");
-        free(item);
-        pausar();
-        return;
-    }
-
-    arq_item = fopen(ARQUIVO_ITEM, "r+b");
-    contador = 0;
-    while (fread(item, sizeof(Itemcardapio), 1, arq_item) == 1) {
-        if (item->disponivel == 1) {
-            contador++;
-            if (contador == numero) {
-                pos_arquivo = ftell(arq_item) - sizeof(Itemcardapio);
-                break;
-            }
-        }
-    }
-
-    printf("\nNovos dados:\n");
-
-    printf("► Nome do Item: ");
-    ler_string(item->nome, sizeof(item->nome));
-
-    printf("► Categoria: ");
-    ler_string(item->categoria, sizeof(item->categoria));
-
-    printf("► Descrição: ");
-    ler_string(item->descricao, sizeof(item->descricao));
-
-    printf("► Preço (R$): ");
-    if (scanf("%f", &item->preco) != 1) {
-        limparBuffer();
-        printf("Preço inválido.\n");
-        free(item);
-        fclose(arq_item);
-        pausar();
-        return;
-    }
-    limparBuffer();
-
-    if(!confirma_dados_cardapio(item)) {
-        printf("\nCadastro cancelado pelo usuário.\n");
-        free(item);
-        pausar();
-        return;
-    }
-
-    fseek(arq_item, pos_arquivo, SEEK_SET);
-    fwrite(item, sizeof(Itemcardapio), 1, arq_item);
-    fclose(arq_item);
-
-    printf("\nItem atualizado com sucesso!\n");
-    free(item);
+    printf("\nItem atualizado!\n");
     pausar();
+
+
 }
 
 
