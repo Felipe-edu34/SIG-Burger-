@@ -9,6 +9,12 @@ typedef struct {
     int disponivel;
 } Itemcardapio;
 
+typedef struct {
+    long pos;        // posição no arquivo
+    Itemcardapio item;   // ponteiro para o produto encontrado
+    int existe;      // 1 = encontrado, 0 = não
+} ResultadoBuscacardapio;
+
 void tela_menu_principal();
 void cardapio();
 int confirma_dados_cardapio(Itemcardapio* item);
