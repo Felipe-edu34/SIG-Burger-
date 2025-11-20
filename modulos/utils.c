@@ -18,7 +18,7 @@ void limparBuffer() {
 
 
 void pausar() {
-    printf("\n Pressione Enter para continuar...\n");
+    printf("\n Pressione Enter para continuar...");
     limparBuffer();
 }
 
