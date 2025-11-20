@@ -45,6 +45,72 @@ int confirma_dados_cardapio(Itemcardapio* item) {
 
 
 
+ResultadoBuscacardapio selecionar_produto_cardapio() {
+    FILE *arq;
+    Itemcardapio* item = (Itemcardapio*) malloc(sizeof(Itemcardapio));
+    int contador = 0, numero;
+    ResultadoBuscacardapio resultado = {0, NULL, 0};
+
+    arq = fopen(ARQUIVO_ITEM, "rb");
+    if (arq == NULL) {
+        printf("Nenhum produto cadastrado.\n");
+        free(item);
+        return resultado;
+    }
+
+    printf("Produtos disponíveis:\n\n");
+    while (fread(item, sizeof(Itemcardapio), 1, arq) == 1) {
+        if (item->disponivel == 1) {
+            contador++;
+            printf(" %d - %s (Qtd: %d, Validade: %s)\n",
+                   contador, item->nome, item->nome, item->categoria);
+        }
+    }
+    fclose(arq);
+
+    if (contador == 0) {
+        printf("\nNenhum produto ativo.\n");
+        free(item);
+        return resultado;
+    }
+
+    printf("\nEscolha o produto: ");
+    scanf("%d", &numero);
+    limparBuffer();
+
+    if (numero < 1 || numero > contador) {
+        printf("\nNúmero inválido!\n");
+        free(item);
+        return resultado;
+    }
+
+    // Reabrir arquivo para obter a posição real
+    arq = fopen(ARQUIVO_ITEM, "rb");
+    contador = 0;
+
+    while (fread(item, sizeof(Itemcardapio), 1, arq) == 1) {
+
+        if (item->disponivel == 1) {
+            contador++;
+            if (contador == numero) {
+
+                resultado.pos = ftell(arq) - sizeof(Itemcardapio);
+                resultado.item = *item;
+                resultado.existe = 1;
+
+                fclose(arq);
+                return resultado;
+            }
+        }
+    }
+
+    fclose(arq);
+    free(item);
+    return resultado;
+}
+
+
+
 void exibir_item(Itemcardapio* item){
 
     printf("╔══════════════════════════════════════════════════╗\n");
