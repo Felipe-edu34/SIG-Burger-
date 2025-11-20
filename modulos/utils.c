@@ -57,7 +57,6 @@ char* ler_string(char* destino, int tamanho) {
 
 
 void tela_inicial () {
-
     limpar_tela();
     func_Ani(tempo_animacao);
     printf("                         .*.                           @@@@........@@                                 ╔══════                            \n");
