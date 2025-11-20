@@ -1,12 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include "cardapio.h"
 #include "cliente.h"
 #include "utils.h"
 #include "estoque.h"
 #include "relatorio.h"
 #include "financeiro.h"
+
 
 
 void tela_menu_principal() {
@@ -62,6 +64,8 @@ void sobre_o_sistema() {
 
 int main(void) {
     int opcao;
+    tela_inicial();
+    sleep(3);
 
     do {
         tela_menu_principal();
