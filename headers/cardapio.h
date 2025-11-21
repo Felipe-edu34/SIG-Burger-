@@ -1,13 +1,17 @@
 #ifndef CARDAPIO_H
 #define CARDAPIO_H
 
-typedef struct {
+typedef struct Itemcardapio Itemcardapio;
+
+
+struct Itemcardapio {
     char nome[50];
     char categoria[20];
     char descricao[100];
     float preco;
     int disponivel;
-} Itemcardapio;
+    Itemcardapio* prox; 
+};
 
 typedef struct {
     long pos;        // posição no arquivo
