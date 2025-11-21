@@ -23,3 +23,23 @@ void menu_pedidos() {
     printf("╚══════════════════════════════════════════════════╝\n");
     printf("Escolha uma opção: ");
 }
+
+int gerar_numero_pedido() {
+    FILE *arq;
+    Pedido ped;
+    int maior_numero = 0;
+
+    arq = fopen(ARQUIVO_PEDIDOS, "rb");
+    if (arq == NULL) {
+        return 1;
+    }
+
+    while (fread(&ped, sizeof(Pedido), 1, arq) == 1) {
+        if (ped.numero_pedido > maior_numero) {
+            maior_numero = ped.numero_pedido;
+        }
+    }
+    fclose(arq);
+
+    return maior_numero + 1;
+}
