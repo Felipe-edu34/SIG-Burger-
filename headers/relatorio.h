@@ -3,7 +3,7 @@
 
 void menu_relatorio();
 void relatorio();
-void exibir_cardapio_relatorio();
+void exibindo_cardapio_por_categoria();
 void relatorio_cardapio();
 void relatorio_cardapio_itens_disponiveis();
 void relatorio_cardapio_itens_indisponiveis();
