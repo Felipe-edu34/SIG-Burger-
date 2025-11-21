@@ -283,3 +283,76 @@ void listar_pedidos() {
 
     pausar();
 }
+
+void editar_pedido() {
+    FILE *arq;
+    Pedido ped;
+    int numero, contador = 0;
+    long pos_arquivo;
+
+    limpar_tela();
+    printf("╔══════════════════════════════════════════════════╗\n");
+    printf("║                 EDITAR PEDIDO                    ║\n");
+    printf("╚══════════════════════════════════════════════════╝\n\n");
+
+    arq = fopen(ARQUIVO_PEDIDOS, "rb");
+    if (arq == NULL) {
+        printf("Nenhum pedido cadastrado ainda.\n");
+        pausar();
+        return;
+    }
+
+    printf("Pedidos cadastrados:\n\n");
+    while (fread(&ped, sizeof(Pedido), 1, arq) == 1) {
+        if (ped.ativo == 1) {
+            contador++;
+            printf(" %d - Pedido #%d - %s (R$ %.2f)\n",
+                   contador, ped.numero_pedido, ped.nome_cliente, ped.valor_total);
+        }
+    }
+    fclose(arq);
+
+    if (contador == 0) {
+        printf("\nNenhum pedido ativo encontrado.\n");
+        pausar();
+        return;
+    }
+
+    printf("\nDigite o número do pedido: ");
+    scanf("%d", &numero);
+    limparBuffer();
+
+    if (numero < 1 || numero > contador) {
+        printf("\nNúmero inválido!\n");
+        pausar();
+        return;
+    }
+
+    arq = fopen(ARQUIVO_PEDIDOS, "r+b");
+    contador = 0;
+    while (fread(&ped, sizeof(Pedido), 1, arq) == 1) {
+        if (ped.ativo == 1) {
+            contador++;
+            if (contador == numero) {
+                pos_arquivo = ftell(arq) - sizeof(Pedido);
+                break;
+            }
+        }
+    }
+
+    printf("\nEditando Pedido #%d\n", ped.numero_pedido);
+    printf("----------------------------------------------------\n");
+
+    ler_nome_cliente(ped.nome_cliente);
+    ler_telefone_cliente(ped.telefone_cliente);
+
+    printf("► Status (Em preparo/Saiu para entrega/Entregue): ");
+    ler_string(ped.status, sizeof(ped.status));
+
+    fseek(arq, pos_arquivo, SEEK_SET);
+    fwrite(&ped, sizeof(Pedido), 1, arq);
+    fclose(arq);
+
+    printf("\n Pedido atualizado com sucesso!\n");
+    pausar();
+}
