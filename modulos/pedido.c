@@ -356,3 +356,70 @@ void editar_pedido() {
     printf("\n Pedido atualizado com sucesso!\n");
     pausar();
 }
+
+void pesquisar_pedido() {
+    FILE *arq;
+    Pedido ped;
+    int numero, contador = 0, encontrado = 0;
+
+    limpar_tela();
+    printf("╔══════════════════════════════════════════════════╗\n");
+    printf("║               PESQUISAR PEDIDO                   ║\n");
+    printf("╚══════════════════════════════════════════════════╝\n\n");
+
+    arq = fopen(ARQUIVO_PEDIDOS, "rb");
+    if (arq == NULL) {
+        printf("Nenhum pedido cadastrado ainda.\n");
+        pausar();
+        return;
+    }
+
+    printf("Pedidos disponíveis:\n\n");
+    while (fread(&ped, sizeof(Pedido), 1, arq) == 1) {
+        if (ped.ativo == 1) {
+            contador++;
+            printf(" %d - Pedido #%d - %s\n", contador, ped.numero_pedido, ped.nome_cliente);
+        }
+    }
+    fclose(arq);
+
+    if (contador == 0) {
+        printf("\nNenhum pedido ativo encontrado.\n");
+        pausar();
+        return;
+    }
+
+    printf("\nDigite o número do pedido para ver detalhes: ");
+    scanf("%d", &numero);
+    limparBuffer();
+
+    if (numero < 1 || numero > contador) {
+        printf("\nNúmero inválido!\n");
+        pausar();
+        return;
+    }
+
+    arq = fopen(ARQUIVO_PEDIDOS, "rb");
+    contador = 0;
+    while (fread(&ped, sizeof(Pedido), 1, arq) == 1) {
+        if (ped.ativo == 1) {
+            contador++;
+            if (contador == numero) {
+                encontrado = 1;
+            }
+        }
+
+        if (encontrado) {
+            limpar_tela();
+            exibir_pedido(&ped);
+            encontrado = 2;
+        }
+    }
+
+    if (encontrado == 0) {
+        printf("\nPedido não encontrado.\n");
+    }
+
+    fclose(arq);
+    pausar();
+}
