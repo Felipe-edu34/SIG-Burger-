@@ -4,6 +4,7 @@
 #include "utils.h"
 #include "pedido.h"
 #include "cardapio.h"
+#include "leitura.h"
 
 #define ARQUIVO_PEDIDOS "dados/pedidos.dat"
 
@@ -100,4 +101,140 @@ void exibir_pedido(Pedido* ped) {
     
     printf("║ Valor Total:      R$ %.2f\n", ped->valor_total);
     printf("╚══════════════════════════════════════════════════╝\n");
+}
+
+void gravar_pedido(Pedido* ped) {
+    FILE *arq = fopen(ARQUIVO_PEDIDOS, "ab");
+    if (arq == NULL) {
+        return;
+    }
+
+    fwrite(ped, sizeof(Pedido), 1, arq);
+    fclose(arq);
+}
+
+void cadastrar_pedido() {
+    Pedido* ped = (Pedido*) malloc(sizeof(Pedido));
+    char continuar;
+    int total_itens_solicitados = 0;
+    ItemPedido todos_itens[100];
+
+    limpar_tela();
+    printf("╔══════════════════════════════════════════════════╗\n");
+    printf("║              CADASTRAR NOVO PEDIDO               ║\n");
+    printf("╚══════════════════════════════════════════════════╝\n\n");
+
+    ler_nome_cliente(ped->nome_cliente);
+    ler_telefone_cliente(ped->telefone_cliente);
+    ler_endereco_entrega(ped->endereco_entrega);
+
+    if (strlen(ped->endereco_entrega) > 0) {
+        ped->eh_delivery = 1;
+        ped->taxa_entrega = TAXA_ENTREGA;
+    } else {
+        ped->eh_delivery = 0;
+        ped->taxa_entrega = 0.0;
+        strcpy(ped->endereco_entrega, "Consumo no local");
+    }
+
+    ler_data_pedido(ped->data);
+
+    printf("\n╔══════════════════════════════════════════════════╗\n");
+    printf("║           ADICIONAR ITENS AO PEDIDO              ║\n");
+    printf("╚══════════════════════════════════════════════════╝\n\n");
+
+    do {
+        ResultadoBuscacardapio r = selecionar_produto_cardapio();
+        
+        if (!r.existe) {
+            printf("\nNenhum item selecionado.\n");
+            pausar();
+            break;
+        }
+
+        printf("\n► Quantidade: ");
+        int qtd;
+        if (scanf("%d", &qtd) != 1 || qtd <= 0) {
+            limparBuffer();
+            printf("Quantidade inválida.\n");
+            free(r.item);
+            pausar();
+            continue;
+        }
+        limparBuffer();
+
+        todos_itens[total_itens_solicitados].item = *r.item;
+        todos_itens[total_itens_solicitados].quantidade = qtd;
+        total_itens_solicitados++;
+
+        free(r.item);
+
+        printf("\nItem adicionado!\n");
+        printf("Total de itens no carrinho: %d\n", total_itens_solicitados);
+        printf("\nAdicionar mais itens? (S/N): ");
+        scanf(" %c", &continuar);
+        limparBuffer();
+
+    } while (continuar == 'S' || continuar == 's');
+
+    if (total_itens_solicitados == 0) {
+        printf("\nPedido cancelado: nenhum item adicionado.\n");
+        free(ped);
+        pausar();
+        return;
+    }
+
+    int pedidos_criados = 0;
+    int indice_item = 0;
+
+    while (indice_item < total_itens_solicitados) {
+        ped->numero_pedido = gerar_numero_pedido();
+        ped->total_itens = 0;
+        ped->valor_total = 0.0;
+
+        for (int i = 0; i < MAX_ITENS_PEDIDO && indice_item < total_itens_solicitados; i++) {
+            ped->itens[i] = todos_itens[indice_item];
+            ped->valor_total += todos_itens[indice_item].item.preco * todos_itens[indice_item].quantidade;
+            ped->total_itens++;
+            indice_item++;
+        }
+
+        if (ped->eh_delivery) {
+            ped->valor_total += ped->taxa_entrega;
+        }
+
+        strcpy(ped->status, "Em preparo");
+        ped->ativo = 1;
+
+        if (!confirma_dados_pedido(ped)) {
+            printf("\nCadastro do pedido #%d cancelado pelo usuário.\n", ped->numero_pedido);
+            free(ped);
+            pausar();
+            return;
+        }
+
+        gravar_pedido(ped);
+        pedidos_criados++;
+        
+        printf("\n✓ Pedido #%d cadastrado com sucesso!\n", ped->numero_pedido);
+
+        if (indice_item < total_itens_solicitados) {
+            printf("\n⚠ Limite de %d itens por pedido atingido!\n", MAX_ITENS_PEDIDO);
+            printf("Criando pedido adicional para os itens restantes...\n");
+            pausar();
+        }
+    }
+
+    if (pedidos_criados > 1) {
+        printf("\n╔══════════════════════════════════════════════════╗\n");
+        printf("║  ATENÇÃO: Foram criados %d pedidos               ║\n", pedidos_criados);
+        printf("║  devido ao limite de %d itens por pedido.       ║\n", MAX_ITENS_PEDIDO);
+        if (ped->eh_delivery) {
+            printf("║  Taxa de entrega de R$ %.2f por pedido.        ║\n", TAXA_ENTREGA);
+        }
+        printf("╚══════════════════════════════════════════════════╝\n");
+    }
+
+    free(ped);
+    pausar();
 }
