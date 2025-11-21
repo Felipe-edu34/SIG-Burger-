@@ -21,7 +21,7 @@ void ler_nome_produto(char *nome) {
     do {
     printf("► Nome do Produto: ");
     ler_string(nome, 50);
-    } while (!valida_nome(nome));
+    } while (!validar_nome_produto(nome));
 }
 
 
@@ -30,7 +30,7 @@ void ler_nome_item_cardapio(char *nome) {
     do {
     printf("► Nome do Item: ");
     ler_string(nome, 50);
-    } while (!valida_nome(nome));
+    } while (!validar_nome_produto(nome));
 }
 
 
