@@ -40,14 +40,14 @@ void exibir_cardapio_relatorio() {
     int encontrou = 0;
 
     limpar_tela();
-    printf("╔══════════════════════════════════════════════════════════╗\n");
-    printf("║                          CARDÁPIO                        ║\n");
-    printf("╠══════════════════════════════════════════════════════════╣\n");
+    printf("╔════════════════════════════════════════════════════════════════════════════════════════════╗\n");
+    printf("║                                         CARDÁPIO                                           ║\n");
+    printf("╠════════════════════════════════════════════════════════════════════════════════════════════╣\n");
 
     arq_item = fopen(ARQUIVO_ITEM, "rb");
     if (arq_item == NULL) {
-        printf("║ Nenhum item cadastrado ainda.                           ║\n");
-        printf("╚══════════════════════════════════════════════════════════╝\n");
+        printf("║ Nenhum item cadastrado ainda.                                                              ║\n");
+        printf("╚════════════════════════════════════════════════════════════════════════════════════════════╝\n");
         pausar();
         return;
     }
@@ -60,11 +60,11 @@ void exibir_cardapio_relatorio() {
         // Quando muda a categoria, imprime título
         if (strcmp(categoria_atual, item.categoria) != 0) {
             if (encontrou)
-                printf("╠══════════════════════════════════════════════════════════╣\n");
+                printf("╠════════════════════════════════════════════════════════════════════════════════════════════╣\n");
 
             strcpy(categoria_atual, item.categoria);
-            printf("║   %-55s║\n", categoria_atual);
-            printf("║ -------------------------------------------------------- ║\n");
+            printf("║   %-89s║\n", categoria_atual);
+            printf("║ ------------------------------------------------------------------------------------------ ║\n");
         }
 
         encontrou = 1;
@@ -72,22 +72,22 @@ void exibir_cardapio_relatorio() {
         // Exibe item formatado
         char linha[70];
         snprintf(linha, sizeof(linha), "• %-28s R$ %6.2f", item.nome, item.preco);
-        printf("║ %-59s║\n", linha);
+        printf("║ %-93s║\n", linha);
 
         if (strlen(item.descricao) > 0) {
             char desc[110];
             snprintf(desc, sizeof(desc), "↳ %s", item.descricao);
-            printf("║    %-56s║\n", desc);
+            printf("║    %-90s║\n", desc);
         }
 
-        printf("║                                                          ║\n");
+        printf("║                                                                                            ║\n");
     }
 
     if (!encontrou) {
         printf("║ Nenhum item ativo encontrado.                           ║\n");
     }
 
-    printf("╚══════════════════════════════════════════════════════════╝\n");
+    printf("╚════════════════════════════════════════════════════════════════════════════════════════════╝\n");
     fclose(arq_item);
     pausar();
 }
@@ -257,8 +257,6 @@ void exibindo_item_do_cardapio_por_preco() {
 
 
 
-
-
 void relatorio_cardapio() {
     limpar_tela();
     printf("╔══════════════════════════════════════════════════╗\n");
@@ -363,7 +361,7 @@ void exibir_itens_por_nome() {
     Produto* prod = (Produto*) malloc(sizeof(Produto));
     limpar_tela();
     printf("╔══════════════════════════════════════════════════╗\n");
-    printf("║          PROCURAR ITEM POR NOME                   ║\n");
+    printf("║          PROCURAR ITEM POR NOME                  ║\n");
     printf("╚══════════════════════════════════════════════════╝\n");
     
     printf("digite o nome dos item que voce quer ver: ");
