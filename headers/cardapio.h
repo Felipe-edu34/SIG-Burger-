@@ -15,6 +15,8 @@ typedef struct {
     int existe;      // 1 = encontrado, 0 = não
 } ResultadoBuscacardapio;
 
+ResultadoBuscacardapio selecionar_produto_cardapio();
+
 void tela_menu_principal();
 void cardapio();
 int confirma_dados_cardapio(Itemcardapio* item);
