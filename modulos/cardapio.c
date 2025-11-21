@@ -4,6 +4,7 @@
 #include "utils.h"
 #include "cardapio.h"
 #include "leitura.h"
+#include "relatorio.h"
 
 #define ARQUIVO_ITEM "dados/item_cardapio.dat"
 
@@ -344,7 +345,7 @@ void cardapio() {
                 pesquisar_item_do_cardapio();
                 break;
             case 5:
-                exibir_cardapio();
+                exibir_cardapio_relatorio();
                 break;
             case 0:
                 break;
