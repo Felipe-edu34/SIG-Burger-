@@ -180,11 +180,9 @@ void procurar_item_por_categoria() {
 
 
 void exibindo_item_do_cardapio_por_preco() {
-
     FILE *fp;
-    Itemcardapio *lista = NULL;
-    Itemcardapio *novo, *atual, *anter;
-    Itemcardapio temp;
+    NodeItem *lista = NULL;
+    NodeItem *novo, *atual, *anter;
 
     fp = fopen(ARQUIVO_ITEM, "rb");
     if (fp == NULL) {
@@ -193,86 +191,52 @@ void exibindo_item_do_cardapio_por_preco() {
         return;
     }
 
-    // ======= LENDO ITENS DO ARQUIVO E CRIANDO LISTA ORDENADA POR PREÇO (STRING) =======
+    // Lendo o arquivo e montando a lista ORDENADA
+    Itemcardapio temp;
+
     while (fread(&temp, sizeof(Itemcardapio), 1, fp) == 1) {
 
-        // Só lista os itens disponíveis
-        if (temp.disponivel != 1)
+        // pula itens indisponíveis
+        if (temp.disponivel == 0) 
             continue;
 
-        // Aloca nó novo
-        novo = (Itemcardapio*) malloc(sizeof(Itemcardapio));
-        if (!novo) {
-            printf("Erro ao alocar memória!\n");
-            fclose(fp);
-            return;
-        }
-
-        memcpy(novo, &temp, sizeof(Itemcardapio));
+        novo = (NodeItem*) malloc(sizeof(NodeItem));
+        novo->dado = temp;
         novo->prox = NULL;
 
-        // Criar strings de preço
-        char preco_novo[20];
-        sprintf(preco_novo, "%.2f", novo->preco);
-
-        // Inserção no início se lista vazia ou preço menor
-        if (lista == NULL) {
+        // Inserção ordenada
+        if (lista == NULL || novo->dado.preco < lista->dado.preco) {
+            novo->prox = lista;
             lista = novo;
-        }
-        else {
+        } else {
+            anter = lista;
+            atual = lista->prox;
 
-            char preco_lista[20];
-            sprintf(preco_lista, "%.2f", lista->preco);
-
-            if (strcmp(preco_novo, preco_lista) < 0) {
-                novo->prox = lista;
-                lista = novo;
+            while (atual != NULL && novo->dado.preco > atual->dado.preco) {
+                anter = atual;
+                atual = atual->prox;
             }
-            else {
-                anter = lista;
-                atual  = lista->prox;
 
-                while (atual != NULL) {
-
-                    char preco_atual[20];
-                    sprintf(preco_atual, "%.2f", atual->preco);
-
-                    if (strcmp(preco_novo, preco_atual) < 0)
-                        break;
-
-                    anter = atual;
-                    atual = atual->prox;
-                }
-
-                anter->prox = novo;
-                novo->prox  = atual;
-            }
+            anter->prox = novo;
+            novo->prox = atual;
         }
     }
 
     fclose(fp);
 
-    // ======= EXIBIÇÃO =======
     limpar_tela();
     printf("╔══════════════════════════════════════════════════╗\n");
     printf("║            ITENS DO CARDÁPIO POR PREÇO           ║\n");
     printf("╠══════════════════════════════════════════════════╣\n");
 
+    // Exibindo lista
     int i = 1;
     atual = lista;
-
-    if (atual == NULL) {
-        printf("║      Nenhum item disponível no cardápio          ║\n");
-        printf("╚══════════════════════════════════════════════════╝\n");
-        pausar();
-        return;
-    }
-
     while (atual != NULL) {
 
-        printf("║  %d %s\n", i, atual->nome);
-        printf("║     Categoria : %s\n", atual->categoria);
-        printf("║     Preço     : R$ %.2f\n", atual->preco);
+        printf("║  %d) %s\n", i, atual->dado.nome);
+        printf("║     Categoria : %s\n", atual->dado.categoria);
+        printf("║     Preço     : R$ %.2f\n", atual->dado.preco);
         printf("║     Status    : Disponível\n");
         printf("║--------------------------------------------------║\n");
 
@@ -283,18 +247,13 @@ void exibindo_item_do_cardapio_por_preco() {
     printf("╚══════════════════════════════════════════════════╝\n");
     pausar();
 
-    // ======= LIBERANDO MEMÓRIA =======
+    // Liberando memória
     while (lista != NULL) {
         atual = lista;
         lista = lista->prox;
         free(atual);
     }
 }
-
-
-    
-
-
 
 
 
