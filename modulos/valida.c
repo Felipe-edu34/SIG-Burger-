@@ -25,6 +25,31 @@ int valida_nome(const char* nome) {
 
 
 
+int validar_nome_produto(const char *nome) {
+    int i;
+    int tamanho = strlen(nome);
+
+    // mínimo de 3 caracteres
+    if (tamanho < 3) {
+        return 0;
+    }
+
+    for (i = 0; i < tamanho; i++) {
+        // aceita letras, espaço e hífen '-'
+        if (!(
+              (nome[i] >= 'A' && nome[i] <= 'Z') ||
+              (nome[i] >= 'a' && nome[i] <= 'z') ||
+              nome[i] == ' ' ||
+              nome[i] == '-'
+             )) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+
+
 int valida_data(const char* data) {
     int dia, mes, ano;
     if (sscanf(data, "%2d/%2d/%4d", &dia, &mes, &ano) != 3) {
