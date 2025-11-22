@@ -31,6 +31,12 @@ void menu_relatorio(){
 
 
 
+///////////////////////////////////////////////////////////////////////////////
+// RELATÓRIOS DO CARDAPIO
+///////////////////////////////////////////////////////////////////////////////
+
+
+
 void exibindo_cardapio_por_categoria() {
     FILE *arq_item;
     Itemcardapio temp;
@@ -316,11 +322,19 @@ void relatorio_cardapio() {
 
 
 
+/////////////////////////////////////////////////////////////////////////////////////
+// RELATÓRIOS DO ESTOQUE
+/////////////////////////////////////////////////////////////////////////////////////   
+
+
+
 Nodeproduto* montar_lista_estoque() {
+
     FILE *fp = fopen(ARQUIVO_ESTOQUE, "rb");
     if (!fp) return NULL;
 
     Nodeproduto *lista = NULL;
+    Nodeproduto *ultimo = NULL;
     Nodeproduto *novo;
 
     Produto temp;
@@ -328,8 +342,15 @@ Nodeproduto* montar_lista_estoque() {
     while (fread(&temp, sizeof(Produto), 1, fp) == 1) {
         novo = (Nodeproduto*) malloc(sizeof(Nodeproduto));
         novo->dado = temp;
-        novo->prox = lista;  // insere no início
-        lista = novo;
+        novo->prox = NULL;
+
+        if (lista == NULL) {
+            lista = novo;       // primeiro nó
+            ultimo = novo;
+        } else {
+            ultimo->prox = novo; // insere no fim
+            ultimo = novo;
+        }
     }
 
     fclose(fp);
@@ -389,11 +410,6 @@ void exibir_lista_estoque(Nodeproduto *lista) {
         contador++;
     }
 }
-
-
-
-
-
 
 
 
@@ -661,7 +677,7 @@ void relatorio() {
 
                     switch (opcao_estoque) {
                         case 1:
-                            exibir_todo_o_estoque();
+                            listar_todo_estoque();
                             break;
                         case 2:
                             exibir_itens_com_baixa_quantidade();
