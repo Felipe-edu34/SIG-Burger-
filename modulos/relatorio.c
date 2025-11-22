@@ -393,18 +393,19 @@ void exibir_lista_estoque(Nodeproduto *lista) {
         return;
     }
 
-    printf("ID   %-25s %-15s %s\n", "Nome", "Categoria", "Quantidade");
-    printf("-----------------------------------------------------------------------\n");
+    printf("ID   %-25s %-15s %-15s %-5s \n", "Nome", "Categoria", "Quantidade", "Validade");
+    printf("---------------------------------------------------------------------------------\n");
 
     Nodeproduto *p = lista;
     int contador = 1;
 
     while (p != NULL) {
-        printf("%-4d %-25s %-15s %d\n",
+        printf("%-4d %-25s %-15s %d %23s\n",
                contador,
                p->dado.nome,
                p->dado.categoria,
-               p->dado.quantidade);
+               p->dado.quantidade,
+               p->dado.validade);
 
         p = p->prox;
         contador++;
