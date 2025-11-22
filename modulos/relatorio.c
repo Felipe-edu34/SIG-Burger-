@@ -338,6 +338,35 @@ Nodeproduto* montar_lista_estoque() {
 
 
 
+void ordenar_por_quantidade(Nodeproduto *lista) {
+    if (!lista) return;
+
+    int trocou;
+    Nodeproduto *p;
+    Nodeproduto *ultimo = NULL;
+
+    do {
+        trocou = 0;
+        p = lista;
+
+        while (p->prox != ultimo) {
+            if (p->dado.quantidade > p->prox->dado.quantidade) {
+                Produto temp = p->dado;
+                p->dado = p->prox->dado;
+                p->prox->dado = temp;
+                trocou = 1;
+            }
+            p = p->prox;
+        }
+
+        ultimo = p;
+
+    } while (trocou);
+}
+
+
+
+
 
 
 
