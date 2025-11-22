@@ -316,57 +316,44 @@ void relatorio_cardapio() {
 
 
 
-void exibir_todo_o_estoque() {
+Nodeproduto* montar_lista_estoque() {
+    FILE *fp = fopen(ARQUIVO_ESTOQUE, "rb");
+    if (!fp) return NULL;
 
-    limpar_tela();
-    printf("╔══════════════════════════════════════════════════╗\n");
-    printf("║          EXIBIR TODOS OS ITENS DO ESTOQUE        ║\n");
-    printf("╚══════════════════════════════════════════════════╝\n");
-
-    FILE* arq_estoque = fopen(ARQUIVO_ESTOQUE, "rb");
-    if (arq_estoque == NULL) {
-        printf("Erro ao abrir o arquivo de estoque.\n");
-        limparBuffer();
-        return;
-    }
-
-
-    Nodeproduto* inicio = NULL;
-    Nodeproduto* fim = NULL;
+    Nodeproduto *lista = NULL;
+    Nodeproduto *novo;
 
     Produto temp;
 
-    while (fread(&temp, sizeof(Produto), 1, arq_estoque) == 1) {
-
-        Nodeproduto* novo = (Nodeproduto*) malloc(sizeof(Nodeproduto));
+    while (fread(&temp, sizeof(Produto), 1, fp) == 1) {
+        novo = (Nodeproduto*) malloc(sizeof(Nodeproduto));
         novo->dado = temp;
-        novo->prox = NULL;
-
-        if (inicio == NULL) {
-            inicio = novo;
-            fim = novo;
-        } else {
-            fim->prox = novo;
-            fim = novo;
-        }
+        novo->prox = lista;  // insere no início
+        lista = novo;
     }
 
-    fclose(arq_estoque);
+    fclose(fp);
+    return lista;
+}
 
 
-    Nodeproduto* atual = inicio;
-    while (atual != NULL) {
-        exibir_item_estoque(&atual->dado);
-        atual = atual->prox;
+
+
+
+
+
+void listar_todo_estoque() {
+    Nodeproduto *lista = montar_lista_estoque();
+    if (!lista) {
+        printf("Nenhum item encontrado.\n");
+        pausar();
+        return;
     }
 
-    atual = inicio;
-    while (atual != NULL) {
-        Nodeproduto* aux = atual;
-        atual = atual->prox;
-        free(aux);
-    }
+    limpar_tela();
+    exibir_lista_estoque(lista);
 
+    liberar_lista(lista);
     pausar();
 }
 
@@ -468,7 +455,7 @@ Nodeproduto* montar_lista_ordenada_por_quantidade() {
     Nodeproduto* tail = NULL;
     Produto temp;
 
-    // ========== Montagem da lista ==========
+
     while (fread(&temp, sizeof(Produto), 1, arq) == 1) {
 
         Nodeproduto* novo = malloc(sizeof(Nodeproduto));
@@ -521,36 +508,19 @@ Nodeproduto* montar_lista_ordenada_por_quantidade() {
 
 
 void listar_estoque_por_quantidade() {
-
-    Nodeproduto* lista = montar_lista_ordenada_por_quantidade();
-
+    Nodeproduto *lista = montar_lista_estoque();
     if (!lista) {
-        printf("Nenhum item no estoque.\n");
+        printf("Nenhum item encontrado.\n");
         pausar();
         return;
     }
 
+    ordenar_por_quantidade(lista);
+
     limpar_tela();
-    printf("ID   %-25s %-15s %s\n", "Nome", "Categoria", "Quantidade");
-    printf("-----------------------------------------------------------------------\n");
+    exibir_lista_estoque(lista);
 
-    int contador = 1;
-    Nodeproduto* p = lista;
-
-    while (p != NULL) {
-        printf("%-4d %-25s %-15s %d\n",
-               contador,
-               p->dado.nome,
-               p->dado.categoria,
-               p->dado.quantidade);
-
-        p = p->prox;
-        contador++;
-    }
-
-    // LIBERA A MEMÓRIA AQUI
     liberar_lista(lista);
-
     pausar();
 }
 
@@ -568,7 +538,7 @@ void liberar_lista(Nodeproduto *lista) {
 
 
 
-void relatorio_estoque() {
+void relatorio_estoque() { 
     limpar_tela();
     printf("╔══════════════════════════════════════════════════╗\n");
     printf("║               RELATÓRIO DO ESTOQUE               ║\n");
