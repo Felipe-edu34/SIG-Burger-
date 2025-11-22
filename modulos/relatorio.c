@@ -366,6 +366,32 @@ void ordenar_por_quantidade(Nodeproduto *lista) {
 
 
 
+void exibir_lista_estoque(Nodeproduto *lista) {
+    if (!lista) {
+        printf("Nenhum item no estoque.\n");
+        return;
+    }
+
+    printf("ID   %-25s %-15s %s\n", "Nome", "Categoria", "Quantidade");
+    printf("-----------------------------------------------------------------------\n");
+
+    Nodeproduto *p = lista;
+    int contador = 1;
+
+    while (p != NULL) {
+        printf("%-4d %-25s %-15s %d\n",
+               contador,
+               p->dado.nome,
+               p->dado.categoria,
+               p->dado.quantidade);
+
+        p = p->prox;
+        contador++;
+    }
+}
+
+
+
 
 
 
