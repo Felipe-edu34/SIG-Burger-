@@ -8,6 +8,7 @@
 #include "estoque.h"
 #include "relatorio.h"
 #include "financeiro.h"
+#include "pedido.h"
 
 
 
@@ -78,8 +79,7 @@ int main(void) {
                 cliente();
                 break;
             case 2:
-                printf("Módulo Pedidos selecionado.\n");
-                // Chamar função do módulo Pedidos
+                pedido();
                 break;
             case 3:
                 cardapio();

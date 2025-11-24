@@ -20,6 +20,7 @@ typedef struct {
     int existe;      // 1 = encontrado, 0 = não
 } ResultadoBuscacardapio;
 
+ResultadoBuscacardapio selecionar_produto_cardapio();
 
 typedef struct NodeItem {
     Itemcardapio dado;

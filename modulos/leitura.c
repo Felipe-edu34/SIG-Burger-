@@ -82,9 +82,45 @@ void ler_quantidade(int *quantidade) {
 
 
 
+void ler_nome_cliente(char *nome) {
+    do {
+        printf("► Nome do Cliente: ");
+        ler_string(nome, 100);
+        if (!valida_nome(nome)) {
+            printf("Nome inválido! Mínimo 3 caracteres, apenas letras.\n");
+        }
+    } while (!valida_nome(nome));
+}
 
+void ler_telefone_cliente(char *telefone) {
+    do {
+        printf("► Telefone (apenas números): ");
+        ler_string(telefone, 15);
+        if (!valida_telefone(telefone)) {
+            printf("Telefone inválido! Digite 10 ou 11 dígitos numéricos.\n");
+        }
+    } while (!valida_telefone(telefone));
+}
 
+void ler_endereco_entrega(char *endereco) {
+    printf("► Endereço de Entrega (deixe em branco para consumo no local): ");
+    ler_string(endereco, 200);
+    
+    if (strlen(endereco) > 0) {
+        while (!valida_endereco(endereco)) {
+            printf("Endereço inválido! Mínimo 10 caracteres para delivery.\n");
+            printf("► Endereço de Entrega: ");
+            ler_string(endereco, 200);
+        }
+    }
+}
 
-
-
-
+void ler_data_pedido(char *data) {
+    do {
+        printf("► Data (dd/mm/aaaa): ");
+        ler_string(data, 11);
+        if (!valida_data(data)) {
+            printf("Data inválida! Use o formato dd/mm/aaaa.\n");
+        }
+    } while (!valida_data(data));
+}

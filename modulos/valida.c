@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include "cliente.h"
 #include "utils.h"
 #include "cardapio.h"
@@ -111,4 +112,34 @@ int valida_quantidade(int* quantidade) {
     return 1;
 }
 
+int valida_telefone(const char* telefone) {
+    int i;
+    int tamanho = strlen(telefone);
+    
+    if (tamanho < 10 || tamanho > 11) {
+        return 0;
+    }
+    
+    for (i = 0; i < tamanho; i++) {
+        if (!isdigit(telefone[i])) {
+            return 0;
+        }
+    }
+    
+    return 1;
+}
+
+int valida_endereco(const char* endereco) {
+    int tamanho = strlen(endereco);
+    
+    if (tamanho == 0) {
+        return 1;
+    }
+    
+    if (tamanho < 10) {
+        return 0;
+    }
+    
+    return 1;
+}
 
