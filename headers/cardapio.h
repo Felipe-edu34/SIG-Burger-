@@ -1,13 +1,18 @@
 #ifndef CARDAPIO_H
 #define CARDAPIO_H
 
-typedef struct {
+typedef struct Itemcardapio Itemcardapio;
+
+
+struct Itemcardapio {
     char nome[50];
     char categoria[20];
     char descricao[100];
     float preco;
     int disponivel;
-} Itemcardapio;
+};
+
+
 
 typedef struct {
     long pos;        // posição no arquivo
@@ -16,6 +21,11 @@ typedef struct {
 } ResultadoBuscacardapio;
 
 ResultadoBuscacardapio selecionar_produto_cardapio();
+
+typedef struct NodeItem {
+    Itemcardapio dado;
+    struct NodeItem* prox;
+} NodeItem;
 
 void tela_menu_principal();
 void cardapio();

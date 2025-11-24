@@ -9,6 +9,11 @@ typedef struct {
     int ativo;                
 } Produto;
 
+typedef struct Nodeproduto {
+    Produto dado;
+    struct Nodeproduto* prox;
+} Nodeproduto;
+
 typedef struct {
     long pos;        // posição no arquivo
     Produto *prod;   // ponteiro para o produto encontrado

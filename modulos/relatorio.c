@@ -31,65 +31,208 @@ void menu_relatorio(){
 
 
 
-void exibir_cardapio_relatorio() {
+///////////////////////////////////////////////////////////////////////////////
+// RELATÓRIOS DO CARDAPIO
+///////////////////////////////////////////////////////////////////////////////
 
 
-    FILE *arq_item;
-    Itemcardapio item;
-    char categoria_atual[50] = "";
-    int encontrou = 0;
+
+NodeItem* montar_lista_itens_ordenados_preco() {
+
+    FILE *fp = fopen(ARQUIVO_ITEM, "rb");
+    if (!fp) return NULL;
+
+    NodeItem *lista = NULL;
+    NodeItem *novo, *atual, *anter;
+
+    Itemcardapio temp;
+
+    while (fread(&temp, sizeof(Itemcardapio), 1, fp) == 1) {
+
+        if (temp.disponivel == 0)
+            continue;
+
+        novo = (NodeItem*) malloc(sizeof(NodeItem));
+        novo->dado = temp;
+        novo->prox = NULL;
+
+        if (lista == NULL || novo->dado.preco < lista->dado.preco) {
+            novo->prox = lista;
+            lista = novo;
+        } else {
+            anter = lista;
+            atual = lista->prox;
+
+            while (atual != NULL && novo->dado.preco > atual->dado.preco) {
+                anter = atual;
+                atual = atual->prox;
+            }
+
+            anter->prox = novo;
+            novo->prox = atual;
+        }
+    }
+
+    fclose(fp);
+    return lista;
+}
+
+
+
+void exibir_lista_itens(NodeItem *lista) {
 
     limpar_tela();
-    printf("╔══════════════════════════════════════════════════════════╗\n");
-    printf("║                          CARDÁPIO                        ║\n");
-    printf("╠══════════════════════════════════════════════════════════╣\n");
 
-    arq_item = fopen(ARQUIVO_ITEM, "rb");
-    if (arq_item == NULL) {
-        printf("║ Nenhum item cadastrado ainda.                           ║\n");
-        printf("╚══════════════════════════════════════════════════════════╝\n");
+    printf("ID   %-25s %-15s %-10s\n", "Nome", "Categoria", "Preço");
+    printf("-----------------------------------------------------------------\n");
+
+    int id = 1;
+    NodeItem *p = lista;
+
+    while (p != NULL) {
+        printf("%-4d %-25s %-15s R$ %.2f\n",
+               id,
+               p->dado.nome,
+               p->dado.categoria,
+               p->dado.preco);
+
+        p = p->prox;
+        id++;
+    }
+
+    pausar();
+}
+
+
+
+void listar_itens_por_preco() {
+
+    NodeItem *lista = montar_lista_itens_ordenados_preco();
+
+    if (!lista) {
+        printf("Nenhum item disponível no cardápio.\n");
         pausar();
         return;
     }
 
-    // Ler arquivo uma vez, em ordem
-    while (fread(&item, sizeof(Itemcardapio), 1, arq_item) == 1) {
-        if (item.disponivel == 0)
+    exibir_lista_itens(lista);
+
+    liberar_lista_cardapio(lista);
+}
+
+
+
+void liberar_lista_cardapio(NodeItem *lista) {
+    NodeItem *aux;
+
+    while (lista != NULL) {
+        aux = lista;          // guarda o nó atual
+        lista = lista->prox;  // avança
+        free(aux);            // libera o nó
+    }
+}
+
+
+
+void exibindo_cardapio_por_categoria() {
+    FILE *arq_item;
+    Itemcardapio temp;
+
+    NodeItem *lista = NULL;
+    NodeItem *novo, *atual, *anter;
+
+    arq_item = fopen(ARQUIVO_ITEM, "rb");
+    if (arq_item == NULL) {
+        limpar_tela();
+        printf("╔════════════════════════════════════════════════════════════════════════════════════════════╗\n");
+        printf("║ Nenhum item cadastrado ainda.                                                             ║\n");
+        printf("╚════════════════════════════════════════════════════════════════════════════════════════════╝\n");
+        pausar();
+        return;
+    }
+
+    // 1 — LER ARQUIVO E INSERIR ORDENADO POR CATEGORIA
+    while (fread(&temp, sizeof(Itemcardapio), 1, arq_item) == 1) {
+
+        if (temp.disponivel == 0)
             continue;
 
-        // Quando muda a categoria, imprime título
-        if (strcmp(categoria_atual, item.categoria) != 0) {
-            if (encontrou)
-                printf("╠══════════════════════════════════════════════════════════╣\n");
+        novo = malloc(sizeof(NodeItem));
+        novo->dado = temp;
+        novo->prox = NULL;
 
-            strcpy(categoria_atual, item.categoria);
-            printf("║   %-55s║\n", categoria_atual);
-            printf("║ -------------------------------------------------------- ║\n");
+        // insere ordenado por categoria
+        if (lista == NULL || strcmp(novo->dado.categoria, lista->dado.categoria) < 0) {
+            novo->prox = lista;
+            lista = novo;
+        } else {
+            anter = lista;
+            atual = lista->prox;
+
+            while (atual != NULL &&
+                   strcmp(novo->dado.categoria, atual->dado.categoria) > 0) {
+                anter = atual;
+                atual = atual->prox;
+            }
+
+            anter->prox = novo;
+            novo->prox = atual;
+        }
+    }
+    fclose(arq_item);
+
+    // 2 — EXIBIR IGUAL AO SEU MODELO
+    limpar_tela();
+    printf("╔════════════════════════════════════════════════════════════════════════════════════════════╗\n");
+    printf("║                                         CARDÁPIO                                           ║\n");
+    printf("╠════════════════════════════════════════════════════════════════════════════════════════════╣\n");
+
+    char categoria_atual[30] = "";
+    int encontrou = 0;
+
+    atual = lista;
+    while (atual != NULL) {
+
+        // mudou categoria
+        if (strcmp(categoria_atual, atual->dado.categoria) != 0) {
+            if (encontrou)
+                printf("╠════════════════════════════════════════════════════════════════════════════════════════════╣\n");
+
+            strcpy(categoria_atual, atual->dado.categoria);
+            printf("║   %-89s║\n", categoria_atual);
+            printf("║ ------------------------------------------------------------------------------------------ ║\n");
         }
 
         encontrou = 1;
 
-        // Exibe item formatado
-        char linha[70];
-        snprintf(linha, sizeof(linha), "• %-28s R$ %6.2f", item.nome, item.preco);
-        printf("║ %-59s║\n", linha);
+        char linha[100];
+        snprintf(linha, sizeof(linha), "• %-28s R$ %6.2f", atual->dado.nome, atual->dado.preco);
+        printf("║ %-93s║\n", linha);
 
-        if (strlen(item.descricao) > 0) {
-            char desc[110];
-            snprintf(desc, sizeof(desc), "↳ %s", item.descricao);
-            printf("║    %-56s║\n", desc);
+        if (strlen(atual->dado.descricao) > 0) {
+            char desc[140];
+            snprintf(desc, sizeof(desc), "↳ %s", atual->dado.descricao);
+            printf("║    %-90s║\n", desc);
         }
 
-        printf("║                                                          ║\n");
+        printf("║                                                                                            ║\n");
+
+        atual = atual->prox;
     }
 
     if (!encontrou) {
-        printf("║ Nenhum item ativo encontrado.                           ║\n");
+        printf("║ Nenhum item ativo encontrado.                                                             ║\n");
     }
 
-    printf("╚══════════════════════════════════════════════════════════╝\n");
-    fclose(arq_item);
+    printf("╚════════════════════════════════════════════════════════════════════════════════════════════╝\n");
     pausar();
+
+    // 3 — LIBERA MEMÓRIA
+    while (lista != NULL) {
+        atual = lista;
+        lista = lista->prox;
+        free(atual);
+    }
 }
 
 
@@ -189,6 +332,7 @@ void relatorio_cardapio() {
     printf("║ ► 2. Itens disponíveis                           ║\n");
     printf("║ ► 3. Itens indisponíveis                         ║\n");
     printf("║ ► 4. procurar item por categoria                 ║\n");
+    printf("║ ► 5. exibir itens por preço                      ║\n");
     printf("║                                                  ║\n");
     printf("╚══════════════════════════════════════════════════╝\n");
     printf("Escolha uma opção: ");
@@ -197,28 +341,122 @@ void relatorio_cardapio() {
 
 
 
-void exibir_todo_o_estoque(){
+/////////////////////////////////////////////////////////////////////////////////////
+// RELATÓRIOS DO ESTOQUE
+/////////////////////////////////////////////////////////////////////////////////////   
 
-    Produto* prod = (Produto*) malloc(sizeof(Produto));
-    limpar_tela();
-    printf("╔══════════════════════════════════════════════════╗\n");
-    printf("║          EXIBIR TODOS OS ITENS DO ESTOQUE        ║\n");
-    printf("╚══════════════════════════════════════════════════╝\n");
 
-    FILE* arq_estoque = fopen(ARQUIVO_ESTOQUE,"rb");
-    if (arq_estoque == NULL) {
-        printf("Erro ao abrir o arquivo de estoque.\n");
-        limparBuffer();
+
+Nodeproduto* montar_lista_estoque() {
+
+    FILE *fp = fopen(ARQUIVO_ESTOQUE, "rb");
+    if (!fp) return NULL;
+
+    Nodeproduto *lista = NULL;
+    Nodeproduto *ultimo = NULL;
+    Nodeproduto *novo;
+
+    Produto temp;
+
+    while (fread(&temp, sizeof(Produto), 1, fp) == 1) {
+        novo = (Nodeproduto*) malloc(sizeof(Nodeproduto));
+        novo->dado = temp;
+        novo->prox = NULL;
+
+        if (lista == NULL) {
+            lista = novo;       // primeiro nó
+            ultimo = novo;
+        } else {
+            ultimo->prox = novo; // insere no fim
+            ultimo = novo;
+        }
+    }
+
+    fclose(fp);
+    return lista;
+}
+
+
+
+void ordenar_por_quantidade(Nodeproduto *lista) {
+    if (!lista) return;
+
+    int trocou;
+    Nodeproduto *p;
+    Nodeproduto *ultimo = NULL;
+
+    do {
+        trocou = 0;
+        p = lista;
+
+        while (p->prox != ultimo) {
+            if (p->dado.quantidade > p->prox->dado.quantidade) {
+                Produto temp = p->dado;
+                p->dado = p->prox->dado;
+                p->prox->dado = temp;
+                trocou = 1;
+            }
+            p = p->prox;
+        }
+
+        ultimo = p;
+
+    } while (trocou);
+}
+
+
+
+void exibir_lista_estoque(Nodeproduto *lista) {
+    if (!lista) {
+        printf("Nenhum item no estoque.\n");
         return;
     }
 
-    while (fread(prod, sizeof(Produto), 1, arq_estoque) == 1) {
-        exibir_item_estoque(prod);
+    printf("ID   %-25s %-15s %-15s %-5s \n", "Nome", "Categoria", "Quantidade", "Validade");
+    printf("---------------------------------------------------------------------------------\n");
+
+    Nodeproduto *p = lista;
+    int contador = 1;
+
+    while (p != NULL) {
+        printf("%-4d %-25s %-15s %d %23s\n",
+               contador,
+               p->dado.nome,
+               p->dado.categoria,
+               p->dado.quantidade,
+               p->dado.validade);
+
+        p = p->prox;
+        contador++;
+    }
+}
+
+
+
+void liberar_lista(Nodeproduto *lista) {
+    Nodeproduto *temp;
+
+    while (lista != NULL) {
+        temp = lista;
+        lista = lista->prox;
+        free(temp);
+    }
+}
+
+
+
+void listar_todo_estoque() {
+    Nodeproduto *lista = montar_lista_estoque();
+    if (!lista) {
+        printf("Nenhum item encontrado.\n");
+        pausar();
+        return;
     }
 
+    limpar_tela();
+    exibir_lista_estoque(lista);
 
-    fclose(arq_estoque);
-    free(prod);
+    liberar_lista(lista);
     pausar();
 }
 
@@ -283,7 +521,7 @@ void exibir_itens_por_nome() {
     Produto* prod = (Produto*) malloc(sizeof(Produto));
     limpar_tela();
     printf("╔══════════════════════════════════════════════════╗\n");
-    printf("║          PROCURAR ITEM POR NOME                   ║\n");
+    printf("║          PROCURAR ITEM POR NOME                  ║\n");
     printf("╚══════════════════════════════════════════════════╝\n");
     
     printf("digite o nome dos item que voce quer ver: ");
@@ -308,7 +546,26 @@ void exibir_itens_por_nome() {
 
 
 
-void relatorio_estoque() {
+void listar_estoque_por_quantidade() {
+    Nodeproduto *lista = montar_lista_estoque();
+    if (!lista) {
+        printf("Nenhum item encontrado.\n");
+        pausar();
+        return;
+    }
+
+    ordenar_por_quantidade(lista);
+
+    limpar_tela();
+    exibir_lista_estoque(lista);
+
+    liberar_lista(lista);
+    pausar();
+}
+
+
+
+void relatorio_estoque() { 
     limpar_tela();
     printf("╔══════════════════════════════════════════════════╗\n");
     printf("║               RELATÓRIO DO ESTOQUE               ║\n");
@@ -318,6 +575,7 @@ void relatorio_estoque() {
     printf("║ ► 2. Itens com baixa quantidade                  ║\n");
     printf("║ ► 3. Itens indisponíveis                         ║\n");
     printf("║ ► 4. Itens por nome                              ║\n");
+    printf("║ ► 5. Listar estoque por quantidade               ║\n");
     printf("║                                                  ║\n");
     printf("╚══════════════════════════════════════════════════╝\n");
     printf("Escolha uma opção: ");
@@ -344,7 +602,7 @@ void relatorio() {
 
                     switch (opcao_cardapio) {
                         case 1:
-                            exibir_cardapio_relatorio();
+                            exibindo_cardapio_por_categoria();
                             break;
                         case 2:
                             relatorio_cardapio_itens_disponiveis();
@@ -354,6 +612,9 @@ void relatorio() {
                             break;
                         case 4:
                             procurar_item_por_categoria();
+                            break;
+                        case 5:
+                            listar_itens_por_preco();
                             break;
                         case 0:
                             printf("Voltando ao Menu de Relatórios...\n");
@@ -372,7 +633,7 @@ void relatorio() {
 
                     switch (opcao_estoque) {
                         case 1:
-                            exibir_todo_o_estoque();
+                            listar_todo_estoque();
                             break;
                         case 2:
                             exibir_itens_com_baixa_quantidade();
@@ -383,19 +644,21 @@ void relatorio() {
                         case 4:
                             exibir_itens_por_nome();
                             break;
-                        case 0:
-                            printf("Voltando ao Menu de Relatórios...\n");
+                        case 5:
+                            listar_estoque_por_quantidade();
                             break;
+                        case 0:
                         default:
                             printf("Opção inválida! Tente novamente.\n");
                     }
+
                 } while (opcao_estoque != 0);
                 break;
             case 0:
                 break;
+
             default:
                 printf("Opção inválida! Tente novamente.\n");
         }
-        pausar();
     } while (opcao != 0);
 }

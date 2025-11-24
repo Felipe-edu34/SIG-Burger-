@@ -9,5 +9,6 @@ int valida_descricao(const char* descricao);
 int valida_quantidade(int* quantidade);
 int valida_telefone(const char* telefone);
 int valida_endereco(const char* endereco);
+int validar_nome_produto(const char *nome);
 
 #endif // VALIDA_H

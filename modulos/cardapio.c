@@ -4,6 +4,7 @@
 #include "utils.h"
 #include "cardapio.h"
 #include "leitura.h"
+#include "relatorio.h"
 
 #define ARQUIVO_ITEM "dados/item_cardapio.dat"
 
@@ -261,67 +262,6 @@ void pesquisar_item_do_cardapio() {
 
 
 
-void exibir_cardapio() {
-    FILE *arq_item;
-    Itemcardapio item;
-    char categoria_atual[50] = "";
-    int encontrou = 0;
-
-    limpar_tela();
-    printf("╔══════════════════════════════════════════════════════════╗\n");
-    printf("║                          CARDÁPIO                        ║\n");
-    printf("╠══════════════════════════════════════════════════════════╣\n");
-
-    arq_item = fopen(ARQUIVO_ITEM, "rb");
-    if (arq_item == NULL) {
-        printf("║ Nenhum item cadastrado ainda.                           ║\n");
-        printf("╚══════════════════════════════════════════════════════════╝\n");
-        pausar();
-        return;
-    }
-
-    // Ler arquivo uma vez, em ordem
-    while (fread(&item, sizeof(Itemcardapio), 1, arq_item) == 1) {
-        if (item.disponivel == 0)
-            continue;
-
-        // Quando muda a categoria, imprime título
-        if (strcmp(categoria_atual, item.categoria) != 0) {
-            if (encontrou)
-                printf("╠══════════════════════════════════════════════════════════╣\n");
-
-            strcpy(categoria_atual, item.categoria);
-            printf("║   %-55s║\n", categoria_atual);
-            printf("║ -------------------------------------------------------- ║\n");
-        }
-
-        encontrou = 1;
-
-        // Exibe item formatado
-        char linha[70];
-        snprintf(linha, sizeof(linha), "• %-28s R$ %6.2f", item.nome, item.preco);
-        printf("║ %-59s║\n", linha);
-
-        if (strlen(item.descricao) > 0) {
-            char desc[110];
-            snprintf(desc, sizeof(desc), "↳ %s", item.descricao);
-            printf("║    %-56s║\n", desc);
-        }
-
-        printf("║                                                          ║\n");
-    }
-
-    if (!encontrou) {
-        printf("║ Nenhum item ativo encontrado.                           ║\n");
-    }
-
-    printf("╚══════════════════════════════════════════════════════════╝\n");
-    fclose(arq_item);
-    pausar();
-}
-
-  
-
 void cardapio() {
     int opcao;
 
@@ -344,7 +284,7 @@ void cardapio() {
                 pesquisar_item_do_cardapio();
                 break;
             case 5:
-                exibir_cardapio();
+                exibindo_cardapio_por_categoria();
                 break;
             case 0:
                 break;
