@@ -79,6 +79,33 @@ NodeItem* montar_lista_itens_ordenados_preco() {
 
 
 
+void exibir_lista_itens(NodeItem *lista) {
+
+    limpar_tela();
+
+    printf("ID   %-25s %-15s %-10s\n", "Nome", "Categoria", "Preço");
+    printf("-----------------------------------------------------------------\n");
+
+    int id = 1;
+    NodeItem *p = lista;
+
+    while (p != NULL) {
+        printf("%-4d %-25s %-15s R$ %.2f\n",
+               id,
+               p->dado.nome,
+               p->dado.categoria,
+               p->dado.preco);
+
+        p = p->prox;
+        id++;
+    }
+
+    pausar();
+}
+
+
+
+
 void exibindo_cardapio_por_categoria() {
     FILE *arq_item;
     Itemcardapio temp;
