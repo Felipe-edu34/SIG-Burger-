@@ -84,6 +84,23 @@ char remover_acento(char c) {
 
 
 
+int strcmp_sem_acento(const char *s1, const char *s2) {
+    while (*s1 && *s2) {
+        char c1 = remover_acento(tolower((unsigned char)*s1));
+        char c2 = remover_acento(tolower((unsigned char)*s2));
+
+        if (c1 != c2)
+            return (unsigned char)c1 - (unsigned char)c2;
+
+        s1++;
+        s2++;
+    }
+    return (unsigned char)*s1 - (unsigned char)*s2;
+}
+
+
+
+
 
 void tela_inicial () {
     limpar_tela();
