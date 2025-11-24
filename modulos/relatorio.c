@@ -105,6 +105,30 @@ void exibir_lista_itens(NodeItem *lista) {
 
 
 
+void listar_itens_por_preco() {
+
+    NodeItem *lista = montar_lista_itens_ordenados_preco();
+
+    if (!lista) {
+        printf("Nenhum item disponível no cardápio.\n");
+        pausar();
+        return;
+    }
+
+    exibir_lista_itens(lista);
+
+    // liberar memória
+    NodeItem *tmp;
+    while (lista != NULL) {
+        tmp = lista;
+        lista = lista->prox;
+        free(tmp);
+    }
+}
+
+
+
+
 
 void exibindo_cardapio_por_categoria() {
     FILE *arq_item;
