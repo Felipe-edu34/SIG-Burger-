@@ -433,6 +433,18 @@ void exibir_lista_estoque(Nodeproduto *lista) {
 
 
 
+void liberar_lista(Nodeproduto *lista) {
+    Nodeproduto *temp;
+
+    while (lista != NULL) {
+        temp = lista;
+        lista = lista->prox;
+        free(temp);
+    }
+}
+
+
+
 void listar_todo_estoque() {
     Nodeproduto *lista = montar_lista_estoque();
     if (!lista) {
@@ -549,18 +561,6 @@ void listar_estoque_por_quantidade() {
 
     liberar_lista(lista);
     pausar();
-}
-
-
-
-void liberar_lista(Nodeproduto *lista) {
-    Nodeproduto *temp;
-
-    while (lista != NULL) {
-        temp = lista;
-        lista = lista->prox;
-        free(temp);
-    }
 }
 
 
