@@ -6,6 +6,7 @@ typedef struct {
     char nome[100];
     char telefone[15];
     char endereco[200];
+    char cpf[15];
     int status; // 1 = ativo, 0 = inativo
 } Cliente;
 
