@@ -27,6 +27,8 @@ NodeItem* montar_lista_itens_ordenados_preco();
 void liberar_lista_cardapio(NodeItem *lista);
 void listar_itens_por_preco();
 void exibir_lista_itens(NodeItem *lista);
+void relatorio_clientes();
+void relatorio_clientes_com_ultimo_pedido();
 
 
 
