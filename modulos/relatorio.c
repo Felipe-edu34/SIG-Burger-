@@ -6,9 +6,12 @@
 #include "relatorio.h"
 #include "cliente.h"
 #include "cardapio.h"
+#include "pedido.h"
 
 #define ARQUIVO_ITEM "dados/item_cardapio.dat"
 #define ARQUIVO_ESTOQUE "dados/estoque.dat"
+#define ARQUIVO_PEDIDOS "dados/pedidos.dat"
+#define ARQUIVO_CLIENTES "dados/clientes.dat"
 
 
 void menu_relatorio(){
@@ -568,14 +571,14 @@ void listar_estoque_por_quantidade() {
 void relatorio_estoque() { 
     limpar_tela();
     printf("╔══════════════════════════════════════════════════╗\n");
-    printf("║               RELATORIO CLIENTES                 ║\n");
+    printf("║               RELATÓRIO DO ESTOQUE               ║\n");
     printf("╠══════════════════════════════════════════════════╣\n");
     printf("║                                                  ║\n");
-    printf("║ ► 1. Exibir todos os clientes                    ║\n");
-    printf("║ ► 2. Clientes com pedidos ativos                 ║\n");
-    printf("║ ► 3. ultimo pedido por cliente                   ║\n");
-    printf("║ ► 4. Procurar cliente por nome                   ║\n");
-    printf("║ ► 5. Listar clientes por ordem alfabética        ║\n");
+    printf("║ ► 1. Listar todo o estoque                       ║\n");
+    printf("║ ► 2. Itens com baixa quantidade                  ║\n");
+    printf("║ ► 3. Itens indisponiveis                         ║\n");
+    printf("║ ► 4. Procurar item por nome                      ║\n");
+    printf("║ ► 5. Listar estoque por quantidade               ║\n");
     printf("║                                                  ║\n");
     printf("╚══════════════════════════════════════════════════╝\n");
     printf("Escolha uma opção: ");
@@ -589,12 +592,93 @@ void relatorio_estoque() {
 //////////////////////////////////////////////////////////////////////////////////////////
 
 void relatorio_clientes() {
-    
+    limpar_tela();
+    printf("╔══════════════════════════════════════════════════╗\n");
+    printf("║               RELATORIO CLIENTES                 ║\n");
+    printf("╠══════════════════════════════════════════════════╣\n");
+    printf("║                                                  ║\n");
+    printf("║ ► 1. Exibir todos os clientes                    ║\n");
+    printf("║ ► 2. Clientes com pedidos ativos                 ║\n");
+    printf("║ ► 3. ultimo pedido por cliente                   ║\n");
+    printf("║ ► 4. Procurar cliente por nome                   ║\n");
+    printf("║ ► 5. Listar clientes por ordem alfabética        ║\n");
+    printf("║                                                  ║\n");
+    printf("╚══════════════════════════════════════════════════╝\n");
+    printf("Escolha uma opção: ");
+
+} 
+
+
+
+void relatorio_clientes_com_ultimo_pedido() {
+    FILE *arq_cli, *arq_ped;
+    Cliente cli;
+    Pedido ped;
+    Pedido ultimo;
+
+    int achou;
+
+    limpar_tela();
+
+    printf("╔══════════════════════════════════════════════════════════╗\n");
+    printf("║                         ULTIMO PEDIDO                    ║\n");
+    printf("╚══════════════════════════════════════════════════════════╝\n\n");
+
+    arq_cli = fopen("dados/clientes.dat", "rb");
+    if (!arq_cli) {
+        printf("Nenhum cliente cadastrado.\n");
+        pausar();
+        return;
+    }
+
+    while (fread(&cli, sizeof(Cliente), 1, arq_cli) == 1) {
+
+        if (cli.status == 0) continue;
+
+        printf("Cliente: %s\n", cli.nome);
+        printf("CPF: %s\n", cli.cpf);
+        printf("Telefone: %s\n\n", cli.telefone);
+
+        arq_ped = fopen("dados/pedidos.dat", "rb");
+        if (!arq_ped) {
+            printf("   Nenhum pedido encontrado.\n");
+            printf("----------------------------------------------------------\n\n");
+            continue;
+        }
+
+        achou = 0;
+
+        while (fread(&ped, sizeof(Pedido), 1, arq_ped) == 1) {
+            if (ped.ativo == 1 && strcmp(ped.nome_cliente, cli.nome) == 0) {
+                ultimo = ped;
+                achou = 1;
+            }
+        }
+
+        fclose(arq_ped);
+
+        if (!achou) {
+            printf("   Nenhum pedido realizado por este cliente.\n");
+            printf("----------------------------------------------------------\n\n");
+            continue;
+        }
+
+        printf("Último Pedido: #%d\n", ultimo.numero_pedido);
+        printf("Data: %s\n", ultimo.data);
+        printf("Valor Total: R$ %.2f\n", ultimo.valor_total);
+        printf("Status: %s\n", ultimo.status);
+
+        printf("----------------------------------------------------------\n\n");
+    }
+
+    fclose(arq_cli);
+    pausar();
 }
 
 
+
 void relatorio() {
-    int opcao, opcao_estoque, opcao_cardapio;
+    int opcao, opcao_estoque, opcao_cardapio, opcao_clientes;
     
 
     do {
@@ -657,11 +741,36 @@ void relatorio() {
                             listar_estoque_por_quantidade();
                             break;
                         case 0:
+                            break;
+                        default:
+                      printf("Opção inválida! Tente novamente.\n");
+                    }
+                } while (opcao_estoque != 0);
+                break;
+            case 3:
+                do{
+                    relatorio_clientes();
+                    scanf("%d", &opcao_clientes);
+                    limparBuffer();
+
+                    switch (opcao_clientes) {
+                        case 1:
+                            break;
+                        case 2:
+                            break;
+                        case 3:
+                            relatorio_clientes_com_ultimo_pedido();
+                            break;
+                        case 4:
+                            break;
+                        case 5:
+                            break;
+                        case 0:
+                            break;
                         default:
                             printf("Opção inválida! Tente novamente.\n");
                     }
-
-                } while (opcao_estoque != 0);
+                } while (opcao_clientes != 0);
                 break;
             case 0:
                 break;
