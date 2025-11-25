@@ -5,8 +5,10 @@
 #include "pedido.h"
 #include "cardapio.h"
 #include "leitura.h"
+#include "cliente.h"
 
 #define ARQUIVO_PEDIDOS "dados/pedidos.dat"
+#define ARQUIVO_CLIENTES "dados/clientes.dat"
 
 void menu_pedidos() {
     limpar_tela();
@@ -118,17 +120,39 @@ void cadastrar_pedido() {
     char continuar;
     int total_itens_solicitados = 0;
     ItemPedido todos_itens[100];
+    char cpf_lido[20];
+    Cliente cli;
+    int achou = 0;
 
     limpar_tela();
     printf("╔══════════════════════════════════════════════════╗\n");
     printf("║              CADASTRAR NOVO PEDIDO               ║\n");
     printf("╚══════════════════════════════════════════════════╝\n\n");
 
-    ler_nome_cliente(ped->nome_cliente);
-    ler_telefone_cliente(ped->telefone_cliente);
-    ler_endereco_entrega(ped->endereco_entrega);
+    ler_cpf_cliente(cpf_lido);
 
-    if (strlen(ped->endereco_entrega) > 0) {
+    FILE *arq_cli = fopen(ARQUIVO_CLIENTES, "rb");
+    if (!arq_cli) {
+        printf("Arquivo de clientes não encontrado!\n");
+        free(ped);
+        return;
+    }
+
+    
+
+    while (!achou && fread(&cli, sizeof(Cliente), 1, arq_cli)) {
+    if (strcmp(cli.cpf, cpf_lido) == 0) {
+        achou = 1;
+        printf("Cliente encontrado: %s\n", cli.nome);
+        strcpy(ped->nome_cliente, cli.nome);
+        strcpy(ped->telefone_cliente, cli.telefone);
+        strcpy(ped->endereco_entrega, cli.endereco);
+        }
+    }
+    
+    fclose(arq_cli);
+
+    if (strlen(cli.endereco) > 0) {
         ped->eh_delivery = 1;
         ped->taxa_entrega = TAXA_ENTREGA;
     } else {
