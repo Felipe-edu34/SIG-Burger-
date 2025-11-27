@@ -216,7 +216,10 @@ void exibindo_cardapio_por_categoria() {
         if (strlen(atual->dado.descricao) > 0) {
             char desc[140];
             snprintf(desc, sizeof(desc), "↳ %s", atual->dado.descricao);
-            printf("║    %-90s║\n", desc);
+            if (strlen(desc) > 90)
+            desc[90] = '\0';
+        
+        printf("║    %-90s║\n", desc);
         }
 
         printf("║                                                                                            ║\n");
@@ -231,12 +234,7 @@ void exibindo_cardapio_por_categoria() {
     printf("╚════════════════════════════════════════════════════════════════════════════════════════════╝\n");
     pausar();
 
-    // 3 — LIBERA MEMÓRIA
-    while (lista != NULL) {
-        atual = lista;
-        lista = lista->prox;
-        free(atual);
-    }
+    liberar_lista_cardapio(lista);
 }
 
 
@@ -305,7 +303,7 @@ int strcasestr_custom(const char *haystack, const char *needle) {
 
 void procurar_item_por_categoria() {
 
-    char categoria_lida[15];
+    char categoria_lida[40];
     Itemcardapio* item = (Itemcardapio*) malloc(sizeof(Itemcardapio));
     limpar_tela();
     printf("╔══════════════════════════════════════════════════╗\n");
@@ -324,6 +322,7 @@ void procurar_item_por_categoria() {
     }
 
     while (fread(item, sizeof(Itemcardapio), 1, arq_cardapio) == 1) {
+
         if (strcasestr_custom(item->categoria, categoria_lida)) {
             exibir_item(item);
         }
@@ -1164,6 +1163,39 @@ void relatorio() {
                             printf("Opção inválida! Tente novamente.\n");
                     }
                 } while (opcao_clientes != 0);
+                break;
+            case 4:
+                do {
+                    relatorio_pedidos();
+                    scanf("%d", &opcao);
+                    limparBuffer();
+
+                    switch (opcao) {
+                        case 1:
+                            listar_pedidos();
+                            break;
+                        case 2:
+                            exibir_pedidos_por_status();
+                            break;
+                        case 3:
+                            relatorio_delivery_vs_local();
+                            break;
+                        case 4:
+                            relatorio_itens_mais_pedidos();
+                            break;
+                        case 5:
+                            relatorio_historico_cliente();
+                            break;
+                        case 6:
+                            relatorio_pedidos_por_data();
+                            break;
+                        case 0:
+                            printf("Voltando ao Menu de Relatórios...\n");
+                            break;
+                        default:
+                            printf("Opção inválida! Tente novamente.\n");
+                    }
+                } while (opcao != 0);
                 break;
             case 0:
                 break;
