@@ -54,6 +54,8 @@ int compararCategorias(const void *a, const void *b) {
     return strcmp(itemA->categoria, itemB->categoria);
 }
 
+
+
 ResultadoBuscacardapio selecionar_produto_cardapio() {
     FILE *arq;
     Itemcardapio temp;
@@ -110,7 +112,6 @@ ResultadoBuscacardapio selecionar_produto_cardapio() {
         return resultado;
     }
 
-    // -------- 5) PREPARAR RESULTADO ----------
     resultado.item = malloc(sizeof(Itemcardapio));
     *resultado.item = lista[numero - 1];
     resultado.existe = 1;
