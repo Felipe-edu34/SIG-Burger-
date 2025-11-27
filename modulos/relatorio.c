@@ -303,7 +303,6 @@ int strcasestr_custom(const char *haystack, const char *needle) {
 
 
 
-
 void procurar_item_por_categoria() {
 
     char categoria_lida[15];
@@ -325,7 +324,7 @@ void procurar_item_por_categoria() {
     }
 
     while (fread(item, sizeof(Itemcardapio), 1, arq_cardapio) == 1) {
-        if (strstr(item->categoria, categoria_lida) != NULL) {
+        if (strcasestr_custom(item->categoria, categoria_lida)) {
             exibir_item(item);
         }
     }
