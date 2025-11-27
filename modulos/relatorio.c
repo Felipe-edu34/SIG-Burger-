@@ -241,50 +241,40 @@ void exibindo_cardapio_por_categoria() {
 
 
 void relatorio_cardapio_itens_disponiveis() {
-
-    limpar_tela();
-    printf("╔══════════════════════════════════════════════════╗\n");
-    printf("║           ITEM DISPONIVEIS NO CARDAPIO           ║\n");
-    printf("╚══════════════════════════════════════════════════╝\n");
-
-    Itemcardapio* item = (Itemcardapio*) malloc(sizeof(Itemcardapio));
-    FILE* arq_cardapio = fopen(ARQUIVO_ITEM,"rb");
-    if (arq_cardapio == NULL) {
-        printf("Erro ao abrir o arquivo de cardapio.\n");
-        limparBuffer();
-        return;
-    }
-    while (fread(item, sizeof(Itemcardapio), 1, arq_cardapio) == 1) {
-        if(item->disponivel == 1){
-        exibir_item(item);
-        }
-    }
-    fclose(arq_cardapio);
-    free(item);
-    pausar();
+    relatorio_itens_por_status(1, "ITEMS DISPONÍVEIS NO CARDÁPIO");
 }
 
 
 
 void relatorio_cardapio_itens_indisponiveis() {
-   limpar_tela();
+    relatorio_itens_por_status(0, "ITEMS INDISPONÍVEIS NO CARDÁPIO");
+}
+
+
+
+void relatorio_itens_por_status(int status, const char *titulo) {
+    limpar_tela();
     printf("╔══════════════════════════════════════════════════╗\n");
-    printf("║           ITEM INDISPONIVEIS NO CARDAPIO         ║\n");
+    printf("║ %50s ║\n", titulo);
     printf("╚══════════════════════════════════════════════════╝\n");
 
-    Itemcardapio* item = (Itemcardapio*) malloc(sizeof(Itemcardapio));
-    FILE* arq_cardapio = fopen(ARQUIVO_ITEM,"rb");
-    if (arq_cardapio == NULL) {
+    Itemcardapio *item = malloc(sizeof(Itemcardapio));
+    FILE *arq = fopen(ARQUIVO_ITEM, "rb");
+
+    if (arq == NULL) {
         printf("Erro ao abrir o arquivo de cardapio.\n");
         limparBuffer();
+        free(item);
         return;
     }
-    while (fread(item, sizeof(Itemcardapio), 1, arq_cardapio) == 1) {
-        if(item->disponivel == 0){
-        exibir_item(item);
+
+    while (fread(item, sizeof(Itemcardapio), 1, arq) == 1) {
+        if (item->disponivel == status) {
+            exibir_item(item);
         }
     }
-    fclose(arq_cardapio);
+
+    fclose(arq);
     free(item);
     pausar();
 }
