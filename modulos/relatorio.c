@@ -280,7 +280,7 @@ void relatorio_cardapio_itens_indisponiveis() {
         return;
     }
     while (fread(item, sizeof(Itemcardapio), 1, arq_cardapio) == 1) {
-        if(item->disponivel == 1){
+        if(item->disponivel == 0){
         exibir_item(item);
         }
     }
@@ -591,6 +591,8 @@ void relatorio_estoque() {
 // RELATÓRIOS CLIENTES
 //////////////////////////////////////////////////////////////////////////////////////////
 
+
+
 void relatorio_clientes() {
     limpar_tela();
     printf("╔══════════════════════════════════════════════════╗\n");
@@ -675,9 +677,13 @@ void relatorio_clientes_com_ultimo_pedido() {
     pausar();
 }
 
+
+
 ///////////////////////////////////////////////////////////////////////////////
 // RELATÓRIOS DOS PEDIDOS
 ///////////////////////////////////////////////////////////////////////////////
+
+
 
 void exibir_pedidos_por_status() {
     FILE *arq;
@@ -733,6 +739,8 @@ void exibir_pedidos_por_status() {
 
     pausar();
 }
+
+
 
 void relatorio_delivery_vs_local() {
     FILE *arq;
@@ -792,6 +800,8 @@ void relatorio_delivery_vs_local() {
 
     pausar();
 }
+
+
 
 void relatorio_itens_mais_pedidos() {
     FILE *arq;
@@ -873,6 +883,8 @@ void relatorio_itens_mais_pedidos() {
 
     pausar();
 }
+
+
 
 void relatorio_historico_cliente() {
     FILE *arq_ped, *arq_cli;
@@ -964,6 +976,8 @@ void relatorio_historico_cliente() {
     pausar();
 }
 
+
+
 void relatorio_pedidos_por_data() {
     FILE *arq;
     Pedido ped;
@@ -1023,6 +1037,8 @@ void relatorio_pedidos_por_data() {
     pausar();
 }
 
+
+
 void relatorio_pedidos() {
     limpar_tela();
     printf("╔══════════════════════════════════════════════════╗\n");
@@ -1039,6 +1055,7 @@ void relatorio_pedidos() {
     printf("╚══════════════════════════════════════════════════╝\n");
     printf("Escolha uma opção: ");
 }
+
 
 
 void relatorio() {
