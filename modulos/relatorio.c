@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include "utils.h"
 #include "estoque.h"
 #include "relatorio.h"
@@ -278,6 +279,28 @@ void relatorio_itens_por_status(int status, const char *titulo) {
     free(item);
     pausar();
 }
+
+
+
+int strcasestr_custom(const char *haystack, const char *needle) {
+    if (!haystack || !needle) return 0;
+
+    char h[200], n[200];
+    int i;
+
+    // copia e converte para minúsculas
+    for (i = 0; haystack[i] && i < 199; i++)
+        h[i] = tolower(haystack[i]);
+    h[i] = '\0';
+
+    for (i = 0; needle[i] && i < 199; i++)
+        n[i] = tolower(needle[i]);
+    n[i] = '\0';
+
+    // procura substring
+    return strstr(h, n) != NULL;
+}
+
 
 
 
