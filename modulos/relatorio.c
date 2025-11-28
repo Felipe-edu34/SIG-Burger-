@@ -280,7 +280,7 @@ void relatorio_itens_por_status(int status, const char *titulo) {
 
     while (fread(item, sizeof(Itemcardapio), 1, arq) == 1) {
         if (item->disponivel == status) {
-            exibir_item(item);
+            exibir_item_listagem(item);
         }
     }
 
@@ -335,7 +335,7 @@ void procurar_item_por_categoria() {
     while (fread(item, sizeof(Itemcardapio), 1, arq_cardapio) == 1) {
 
         if (strcasestr_custom(item->categoria, categoria_lida)) {
-            exibir_item(item);
+            exibir_item_listagem(item);
         }
     }
     fclose(arq_cardapio);
