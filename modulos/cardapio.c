@@ -125,7 +125,6 @@ ResultadoBuscacardapio selecionar_produto_cardapio() {
 
 
 
-
 void exibir_item(Itemcardapio* item){
 
     printf("╔══════════════════════════════════════════════════╗\n");
