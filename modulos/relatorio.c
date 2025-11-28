@@ -41,6 +41,17 @@ void menu_relatorio(){
 
 
 
+void exibir_item_listagem(Itemcardapio* item) {
+    printf("-----------------------------------------------------------------------\n");
+    printf(" Nome: %s\n", item->nome);
+    printf(" Categoria: %s\n", item->categoria);
+    printf(" Preço: R$ %.2f\n", item->preco);
+    printf(" Descrição: %s\n", item->descricao);
+    printf("-----------------------------------------------------------------------\n\n");
+}
+
+
+
 NodeItem* montar_lista_itens_ordenados_preco() {
 
     FILE *fp = fopen(ARQUIVO_ITEM, "rb");
