@@ -1249,6 +1249,176 @@ void relatorio_transacoes_categoria() {
     pausar();
 }
 
+NodeTransacao* montar_lista_entradas_ordenadas() {
+    FILE *fp = fopen(ARQUIVO_FINANCEIRO, "rb");
+    if (!fp) return NULL;
+
+    NodeTransacao *lista = NULL;
+    NodeTransacao *novo, *atual, *anter;
+    Transacao temp;
+
+    while (fread(&temp, sizeof(Transacao), 1, fp) == 1) {
+        if (temp.ativo == 0 || 
+            (strcmp(temp.tipo, "ENTRADA") != 0 && strcmp(temp.tipo, "entrada") != 0))
+            continue;
+
+        novo = (NodeTransacao*) malloc(sizeof(NodeTransacao));
+        novo->dado = temp;
+        novo->prox = NULL;
+
+        // Insere ordenado por valor (MAIOR para MENOR)
+        if (lista == NULL || novo->dado.valor > lista->dado.valor) {
+            novo->prox = lista;
+            lista = novo;
+        } else {
+            anter = lista;
+            atual = lista->prox;
+
+            while (atual != NULL && novo->dado.valor < atual->dado.valor) {
+                anter = atual;
+                atual = atual->prox;
+            }
+
+            anter->prox = novo;
+            novo->prox = atual;
+        }
+    }
+
+    fclose(fp);
+    return lista;
+}
+
+void liberar_lista_transacoes(NodeTransacao *lista) {
+    NodeTransacao *aux;
+
+    while (lista != NULL) {
+        aux = lista;
+        lista = lista->prox;
+        free(aux);
+    }
+}
+
+void relatorio_maiores_entradas() {
+    NodeTransacao *lista;
+    NodeTransacao *p;
+    int contador = 0;
+    float soma_top = 0.0;
+
+    limpar_tela();
+    printf("╔══════════════════════════════════════════════════╗\n");
+    printf("║            MAIORES ENTRADAS                      ║\n");
+    printf("╚══════════════════════════════════════════════════╝\n\n");
+
+    lista = montar_lista_entradas_ordenadas();
+
+    if (!lista) {
+        printf("Nenhuma entrada encontrada.\n");
+        pausar();
+        return;
+    }
+
+    printf("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n");
+
+    p = lista;
+    while (p != NULL && contador < 10) {
+        contador++;
+        printf("%d. %s\n", contador, p->dado.descricao);
+        printf("   Categoria: %s\n", p->dado.categoria);
+        printf("   Valor: R$ %.2f\n", p->dado.valor);
+        printf("   Data: %s\n", p->dado.data);
+        printf("\n");
+
+        soma_top += p->dado.valor;
+        p = p->prox;
+    }
+
+    printf("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+    printf("Top %d entradas somam: R$ %.2f\n", contador, soma_top);
+
+    liberar_lista_transacoes(lista);
+    pausar();
+}
+
+NodeTransacao* montar_lista_saidas_ordenadas() {
+    FILE *fp = fopen(ARQUIVO_FINANCEIRO, "rb");
+    if (!fp) return NULL;
+
+    NodeTransacao *lista = NULL;
+    NodeTransacao *novo, *atual, *anter;
+    Transacao temp;
+
+    while (fread(&temp, sizeof(Transacao), 1, fp) == 1) {
+        if (temp.ativo == 0 || 
+            (strcmp(temp.tipo, "SAIDA") != 0 && strcmp(temp.tipo, "saida") != 0))
+            continue;
+
+        novo = (NodeTransacao*) malloc(sizeof(NodeTransacao));
+        novo->dado = temp;
+        novo->prox = NULL;
+
+        // Insere ordenado por valor (MAIOR para MENOR)
+        if (lista == NULL || novo->dado.valor > lista->dado.valor) {
+            novo->prox = lista;
+            lista = novo;
+        } else {
+            anter = lista;
+            atual = lista->prox;
+
+            while (atual != NULL && novo->dado.valor < atual->dado.valor) {
+                anter = atual;
+                atual = atual->prox;
+            }
+
+            anter->prox = novo;
+            novo->prox = atual;
+        }
+    }
+
+    fclose(fp);
+    return lista;
+}
+
+void relatorio_maiores_saidas() {
+    NodeTransacao *lista;
+    NodeTransacao *p;
+    int contador = 0;
+    float soma_top = 0.0;
+
+    limpar_tela();
+    printf("╔══════════════════════════════════════════════════╗\n");
+    printf("║             MAIORES SAÍDAS                       ║\n");
+    printf("╚══════════════════════════════════════════════════╝\n\n");
+
+    lista = montar_lista_saidas_ordenadas();
+
+    if (!lista) {
+        printf("Nenhuma saída encontrada.\n");
+        pausar();
+        return;
+    }
+
+    printf("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n");
+
+    p = lista;
+    while (p != NULL && contador < 10) {
+        contador++;
+        printf("%d. %s\n", contador, p->dado.descricao);
+        printf("   Categoria: %s\n", p->dado.categoria);
+        printf("   Valor: R$ %.2f\n", p->dado.valor);
+        printf("   Data: %s\n", p->dado.data);
+        printf("\n");
+
+        soma_top += p->dado.valor;
+        p = p->prox;
+    }
+
+    printf("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+    printf("Top %d saídas somam: R$ %.2f\n", contador, soma_top);
+
+    liberar_lista_transacoes(lista);
+    pausar();
+}
+
 
 void relatorio() {
     int opcao, opcao_estoque, opcao_cardapio, opcao_clientes;
