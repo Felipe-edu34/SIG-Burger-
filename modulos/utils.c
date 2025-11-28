@@ -66,7 +66,7 @@ void tela_inicial () {
     func_Ani(tempo_animacao);
     printf("\t\t                       .*****.                  @@.-------@-------@=------..=@                       ║                \n");
     func_Ani(tempo_animacao);
-    printf("\t\t                     :##########:               @@.---@------------------------.@@                    ║                \n");
+    printf("\t\t                    :##########:               @@.---@------------------------.@@                    ║                \n");
     func_Ani(tempo_animacao);
     printf("\t\t                   .************.             @---------------------------@-----.@                ========            \n");
     func_Ani(tempo_animacao);
