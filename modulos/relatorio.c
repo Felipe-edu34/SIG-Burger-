@@ -1419,6 +1419,87 @@ void relatorio_maiores_saidas() {
     pausar();
 }
 
+void relatorio_fluxo_caixa_mensal() {
+    FILE *arq;
+    Transacao trans;
+    char mes_ano[8];
+    float entradas_mes = 0.0;
+    float saidas_mes = 0.0;
+    int contador = 0;
+
+    limpar_tela();
+    printf("╔══════════════════════════════════════════════════╗\n");
+    printf("║          FLUXO DE CAIXA MENSAL                   ║\n");
+    printf("╚══════════════════════════════════════════════════╝\n\n");
+
+    printf("► Mês/Ano (MM/AAAA): ");
+    ler_string(mes_ano, sizeof(mes_ano));
+
+    arq = fopen(ARQUIVO_FINANCEIRO, "rb");
+    if (arq == NULL) {
+        printf("\nNenhuma transação cadastrada ainda.\n");
+        pausar();
+        return;
+    }
+
+    limpar_tela();
+    printf("╔══════════════════════════════════════════════════╗\n");
+    printf("║       FLUXO DE CAIXA - %s                ║\n", mes_ano);
+    printf("╚══════════════════════════════════════════════════╝\n\n");
+    printf("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n");
+
+    while (fread(&trans, sizeof(Transacao), 1, arq) == 1) {
+        if (trans.ativo == 1) {
+            char data_mes[8];
+            strncpy(data_mes, trans.data + 3, 7);
+            data_mes[7] = '\0';
+
+            if (strcmp(data_mes, mes_ano) == 0) {
+                contador++;
+                printf("%d. [%s] %s\n", contador, trans.data, trans.descricao);
+                printf("   %s - %s: R$ %.2f\n", 
+                       trans.tipo, trans.categoria, trans.valor);
+                printf("\n");
+
+                if (strcmp(trans.tipo, "ENTRADA") == 0 || strcmp(trans.tipo, "entrada") == 0) {
+                    entradas_mes += trans.valor;
+                } else {
+                    saidas_mes += trans.valor;
+                }
+            }
+        }
+    }
+
+    fclose(arq);
+
+    if (contador == 0) {
+        printf("Nenhuma transação encontrada neste mês.\n");
+    } else {
+        float saldo_mes = entradas_mes - saidas_mes;
+
+        printf("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n");
+        printf("╔══════════════════════════════════════════════════╗\n");
+        printf("║              RESUMO DO MÊS                       ║\n");
+        printf("╠══════════════════════════════════════════════════╣\n");
+        printf("║ Transações: %-37d║\n", contador);
+        printf("║ Entradas: R$ %-36.2f║\n", entradas_mes);
+        printf("║ Saídas: R$ %-38.2f║\n", saidas_mes);
+        printf("║ ------------------------------------------------ ║\n");
+        printf("║ Saldo do Mês: R$ %-32.2f║\n", saldo_mes);
+        printf("╚══════════════════════════════════════════════════╝\n");
+
+        if (saldo_mes > 0) {
+            printf("\n✓ Mês positivo (Lucro)\n");
+        } else if (saldo_mes < 0) {
+            printf("\n✗ Mês negativo (Prejuízo)\n");
+        } else {
+            printf("\n= Mês equilibrado\n");
+        }
+    }
+
+    pausar();
+}
+
 
 void relatorio() {
     int opcao, opcao_estoque, opcao_cardapio, opcao_clientes;
