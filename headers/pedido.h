@@ -26,6 +26,12 @@ typedef struct {
     int ativo;
 } Pedido;
 
+typedef struct NodePedido {
+    Pedido dado;
+    struct NodePedido* prox;
+} NodePedido;
+
+
 void menu_pedidos();
 void pedido();
 void cadastrar_pedido();
