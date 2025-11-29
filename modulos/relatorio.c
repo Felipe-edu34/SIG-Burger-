@@ -746,6 +746,67 @@ void relatorio_procurar_cliente_por_nome() {
     pausar();
 }
 
+void relatorio_clientes_com_pedidos_ativos() {
+    FILE *arq_cli, *arq_ped;
+    Cliente cli;
+    Pedido ped;
+    int total_clientes_com_pedidos = 0;
+
+    limpar_tela();
+    printf("╔══════════════════════════════════════════════════╗\n");
+    printf("║        CLIENTES COM PEDIDOS ATIVOS               ║\n");
+    printf("╚══════════════════════════════════════════════════╝\n\n");
+
+    arq_cli = fopen(ARQUIVO_CLIENTES, "rb");
+    if (arq_cli == NULL) {
+        printf("Nenhum cliente cadastrado.\n");
+        pausar();
+        return;
+    }
+
+    printf("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n");
+
+    while (fread(&cli, sizeof(Cliente), 1, arq_cli) == 1) {
+        if (cli.status == 0) continue;
+
+        int tem_pedido_ativo = 0;
+        int total_pedidos = 0;
+        float valor_total = 0.0;
+
+        arq_ped = fopen(ARQUIVO_PEDIDOS, "rb");
+        if (arq_ped != NULL) {
+            while (fread(&ped, sizeof(Pedido), 1, arq_ped) == 1) {
+                if (ped.ativo == 1 && strcmp(ped.telefone_cliente, cli.telefone) == 0) {
+                    tem_pedido_ativo = 1;
+                    total_pedidos++;
+                    valor_total += ped.valor_total;
+                }
+            }
+            fclose(arq_ped);
+        }
+
+        if (tem_pedido_ativo) {
+            total_clientes_com_pedidos++;
+            printf("Cliente: %s\n", cli.nome);
+            printf("CPF: %s\n", cli.cpf);
+            printf("Telefone: %s\n", cli.telefone);
+            printf("Pedidos Ativos: %d\n", total_pedidos);
+            printf("Valor Total: R$ %.2f\n", valor_total);
+            printf("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n");
+        }
+    }
+
+    fclose(arq_cli);
+
+    if (total_clientes_com_pedidos == 0) {
+        printf("Nenhum cliente com pedidos ativos.\n");
+    } else {
+        printf("Total: %d cliente(s) com pedidos ativos\n", total_clientes_com_pedidos);
+    }
+
+    pausar();
+}
+
 void relatorio_clientes_com_ultimo_pedido() {
     FILE *arq_cli, *arq_ped;
     Cliente cli;
