@@ -16,7 +16,6 @@ void menu_financeiro() {
     printf("║ ► 2. Listar Transações                           ║\n");
     printf("║ ► 3. Editar Transação                            ║\n");
     printf("║ ► 4. Excluir Transação                           ║\n");
-    printf("║ ► 5. Relatório Financeiro                        ║\n");
     printf("║ ► 0. Voltar ao Menu Principal                    ║\n");
     printf("║                                                  ║\n");
     printf("╚══════════════════════════════════════════════════╝\n");
@@ -334,9 +333,6 @@ void financeiro() {
                 break;
             case 4:
                 excluir_transacao();
-                break;
-            case 5:
-                relatorio_financeiro();
                 break;
             case 0:
                 printf("\nVoltando ao Menu Principal...\n");
