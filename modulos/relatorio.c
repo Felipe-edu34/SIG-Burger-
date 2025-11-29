@@ -1500,6 +1500,83 @@ void relatorio_fluxo_caixa_mensal() {
     pausar();
 }
 
+void relatorio_comparativo_pedidos_transacoes() {
+    FILE *arq_ped, *arq_fin;
+    Pedido ped;
+    Transacao trans;
+    float total_pedidos = 0.0;
+    float total_entradas = 0.0;
+    int qtd_pedidos = 0;
+    int qtd_entradas = 0;
+
+    limpar_tela();
+    printf("╔══════════════════════════════════════════════════╗\n");
+    printf("║      COMPARATIVO: PEDIDOS VS TRANSAÇÕES          ║\n");
+    printf("╚══════════════════════════════════════════════════╝\n\n");
+
+    arq_ped = fopen(ARQUIVO_PEDIDOS, "rb");
+    if (arq_ped != NULL) {
+        while (fread(&ped, sizeof(Pedido), 1, arq_ped) == 1) {
+            if (ped.ativo == 1) {
+                total_pedidos += ped.valor_total;
+                qtd_pedidos++;
+            }
+        }
+        fclose(arq_ped);
+    }
+
+    arq_fin = fopen(ARQUIVO_FINANCEIRO, "rb");
+    if (arq_fin != NULL) {
+        while (fread(&trans, sizeof(Transacao), 1, arq_fin) == 1) {
+            if (trans.ativo == 1 && 
+                (strcmp(trans.tipo, "ENTRADA") == 0 || strcmp(trans.tipo, "entrada") == 0)) {
+                total_entradas += trans.valor;
+                qtd_entradas++;
+            }
+        }
+        fclose(arq_fin);
+    }
+
+    printf("╔══════════════════════════════════════════════════╗\n");
+    printf("║                 PEDIDOS                          ║\n");
+    printf("╠══════════════════════════════════════════════════╣\n");
+    printf("║ Quantidade: %-37d║\n", qtd_pedidos);
+    printf("║ Valor Total: R$ %-33.2f║\n", total_pedidos);
+    if (qtd_pedidos > 0) {
+        printf("║ Ticket Médio: R$ %-32.2f║\n", total_pedidos / qtd_pedidos);
+    }
+    printf("╚══════════════════════════════════════════════════╝\n\n");
+
+    printf("╔══════════════════════════════════════════════════╗\n");
+    printf("║            TRANSAÇÕES (ENTRADAS)                 ║\n");
+    printf("╠══════════════════════════════════════════════════╣\n");
+    printf("║ Quantidade: %-37d║\n", qtd_entradas);
+    printf("║ Valor Total: R$ %-33.2f║\n", total_entradas);
+    if (qtd_entradas > 0) {
+        printf("║ Média: R$ %-39.2f║\n", total_entradas / qtd_entradas);
+    }
+    printf("╚══════════════════════════════════════════════════╝\n\n");
+
+    float diferenca = total_pedidos - total_entradas;
+
+    printf("╔══════════════════════════════════════════════════╗\n");
+    printf("║                  ANÁLISE                         ║\n");
+    printf("╠══════════════════════════════════════════════════╣\n");
+    printf("║ Diferença: R$ %-35.2f║\n", diferenca);
+
+    if (diferenca > 0) {
+        printf("║ Status: Pedidos > Entradas (verificar lançamentos) ║\n");
+    } else if (diferenca < 0) {
+        printf("║ Status: Entradas > Pedidos (verificar origem)      ║\n");
+    } else {
+        printf("║ Status: Valores coincidem                          ║\n");
+    }
+
+    printf("╚══════════════════════════════════════════════════╝\n");
+
+    pausar();
+}
+
 
 void relatorio() {
     int opcao, opcao_estoque, opcao_cardapio, opcao_clientes;
