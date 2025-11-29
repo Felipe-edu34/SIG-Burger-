@@ -697,6 +697,55 @@ void relatorio_clientes_ordem_alfabetica() {
     pausar();
 }
 
+void relatorio_procurar_cliente_por_nome() {
+    FILE *arq;
+    Cliente cli;
+    char nome_busca[50];
+    int encontrados = 0;
+
+    limpar_tela();
+    printf("╔══════════════════════════════════════════════════╗\n");
+    printf("║         PROCURAR CLIENTE POR NOME                ║\n");
+    printf("╚══════════════════════════════════════════════════╝\n\n");
+
+    printf("► Nome (ou parte do nome): ");
+    ler_string(nome_busca, sizeof(nome_busca));
+
+    arq = fopen(ARQUIVO_CLIENTES, "rb");
+    if (arq == NULL) {
+        printf("\nNenhum cliente cadastrado.\n");
+        pausar();
+        return;
+    }
+
+    limpar_tela();
+    printf("╔══════════════════════════════════════════════════╗\n");
+    printf("║    RESULTADOS PARA: %-28s║\n", nome_busca);
+    printf("╚══════════════════════════════════════════════════╝\n\n");
+    printf("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n");
+
+    while (fread(&cli, sizeof(Cliente), 1, arq) == 1) {
+        if (cli.status == 1 && strcasestr_custom(cli.nome, nome_busca)) {
+            encontrados++;
+            printf("Cliente: %s\n", cli.nome);
+            printf("CPF: %s\n", cli.cpf);
+            printf("Telefone: %s\n", cli.telefone);
+            printf("Endereço: %s\n", cli.endereco);
+            printf("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n");
+        }
+    }
+
+    fclose(arq);
+
+    if (encontrados == 0) {
+        printf("Nenhum cliente encontrado com esse nome.\n");
+    } else {
+        printf("Total encontrado: %d cliente(s)\n", encontrados);
+    }
+
+    pausar();
+}
+
 void relatorio_clientes_com_ultimo_pedido() {
     FILE *arq_cli, *arq_ped;
     Cliente cli;
