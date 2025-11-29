@@ -1579,7 +1579,7 @@ void relatorio_comparativo_pedidos_transacoes() {
 
 
 void relatorio() {
-    int opcao, opcao_estoque, opcao_cardapio, opcao_clientes;
+    int opcao, opcao_estoque, opcao_cardapio, opcao_clientes, opcao_financeiro;
     
 
     do {
@@ -1705,6 +1705,47 @@ void relatorio() {
                             printf("Opção inválida! Tente novamente.\n");
                     }
                 } while (opcao != 0);
+                break;
+            case 5:
+                do {
+                    relatorio_financeiro_menu();
+                    scanf("%d", &opcao_financeiro);
+                    limparBuffer();
+
+                    switch (opcao_financeiro) {
+                        case 1:
+                            relatorio_transacoes_periodo();
+                            break;
+
+                        case 2:
+                            relatorio_transacoes_categoria();
+                            break;
+
+                        case 3:
+                            relatorio_maiores_entradas();
+                            break;
+
+                        case 4:
+                            relatorio_maiores_saidas();
+                            break;
+
+                        case 5:
+                            relatorio_fluxo_caixa_mensal();
+                            break;
+
+                        case 6:
+                            relatorio_comparativo_pedidos_transacoes();
+                            break;
+
+                        case 0:
+                            printf("Voltando ao Menu de Relatórios...\n");
+                            break;
+
+                        default:
+                            printf("Opção inválida! Tente novamente.\n");
+                    }
+
+                } while (opcao_financeiro != 0);
                 break;
             case 0:
                 break;
