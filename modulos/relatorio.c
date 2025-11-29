@@ -660,6 +660,43 @@ NodeCliente* montar_lista_clientes_ordenada() {
     return lista;
 }
 
+void relatorio_clientes_ordem_alfabetica() {
+    NodeCliente *lista, *p;
+    int contador = 0;
+
+    limpar_tela();
+    printf("╔══════════════════════════════════════════════════╗\n");
+    printf("║       CLIENTES EM ORDEM ALFABÉTICA              ║\n");
+    printf("╚══════════════════════════════════════════════════╝\n\n");
+
+    lista = montar_lista_clientes_ordenada();
+
+    if (!lista) {
+        printf("Nenhum cliente cadastrado.\n");
+        pausar();
+        return;
+    }
+
+    printf("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n");
+
+    p = lista;
+    while (p != NULL) {
+        contador++;
+        printf("%d. %s\n", contador, p->dado.nome);
+        printf("   CPF: %s\n", p->dado.cpf);
+        printf("   Telefone: %s\n", p->dado.telefone);
+        printf("   Endereço: %s\n", p->dado.endereco);
+        printf("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n");
+
+        p = p->prox;
+    }
+
+    printf("Total de clientes: %d\n", contador);
+
+    liberar_lista_clientes(lista);
+    pausar();
+}
+
 void relatorio_clientes_com_ultimo_pedido() {
     FILE *arq_cli, *arq_ped;
     Cliente cli;
