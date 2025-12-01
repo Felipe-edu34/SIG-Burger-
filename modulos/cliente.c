@@ -79,10 +79,10 @@ int cpf_existente(char *cpf) {
         return 0;
     }
 
-    arq_clientes = fopen("clientes.dat", "rb");
+    arq_clientes = fopen(ARQUIVO_CLIENTES, "rb");
     if (arq_clientes == NULL) {
         free(cli);
-        return 0;            // arquivo vazio, CPF pode ser cadastrado
+        return 1;            // arquivo vazio, CPF pode ser cadastrado
     }
 
     while (fread(cli, sizeof(Cliente), 1, arq_clientes) == 1) {        // Percorre o arquivo de clientes
