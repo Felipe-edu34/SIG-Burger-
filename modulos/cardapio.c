@@ -59,7 +59,8 @@ int compararCategorias(const void *a, const void *b) {
 ResultadoBuscacardapio selecionar_produto_cardapio() {
     FILE *arq;
     Itemcardapio temp;
-    Itemcardapio *lista = NULL;
+
+    ItemComPos *lista = NULL;  
     int total = 0;
 
     ResultadoBuscacardapio resultado = {0, NULL, 0};
@@ -70,11 +71,16 @@ ResultadoBuscacardapio selecionar_produto_cardapio() {
         return resultado;
     }
 
- 
-    while (fread(&temp, sizeof(Itemcardapio), 1, arq) == 1) {
+    while (1) {
+        long pos = ftell(arq);
+
+        if (fread(&temp, sizeof(Itemcardapio), 1, arq) != 1)
+            break;
+
         if (temp.disponivel == 1) {
-            lista = realloc(lista, (total + 1) * sizeof(Itemcardapio));
-            lista[total] = temp;
+            lista = realloc(lista, (total + 1) * sizeof(ItemComPos));
+            lista[total].item = temp;
+            lista[total].pos = pos;  // ← POSIÇÃO REAL NO ARQUIVO
             total++;
         }
     }
@@ -86,20 +92,19 @@ ResultadoBuscacardapio selecionar_produto_cardapio() {
         return resultado;
     }
 
-    qsort(lista, total, sizeof(Itemcardapio), compararCategorias);
+    qsort(lista, total, sizeof(ItemComPos), compararCategorias);
 
     printf("Produtos disponíveis:\n\n");
 
     for (int i = 0; i < total; i++) {
         printf("%3d | %-20s | %-12s | %-80s | R$ %7.2f\n",
             i + 1,
-            lista[i].nome,
-            lista[i].categoria,
-            lista[i].descricao,
-            lista[i].preco
+            lista[i].item.nome,
+            lista[i].item.categoria,
+            lista[i].item.descricao,
+            lista[i].item.preco
         );
     }
-
 
     int numero;
     printf("\nEscolha o produto: ");
@@ -112,12 +117,11 @@ ResultadoBuscacardapio selecionar_produto_cardapio() {
         return resultado;
     }
 
+    // Preenche o seu ResultadoBuscacardapio normalmente
     resultado.item = malloc(sizeof(Itemcardapio));
-    *resultado.item = lista[numero - 1];
+    *resultado.item = lista[numero - 1].item;
+    resultado.pos = lista[numero - 1].pos;  // ← POSIÇÃO CORRETA!
     resultado.existe = 1;
-
-    // A posição no arquivo não faz mais sentido com ordenação,
-    // então NÃO usamos mais ftell + offset.
 
     free(lista);
     return resultado;
@@ -208,10 +212,9 @@ void excluir_item_do_cardapio() {
     }
 
     FILE *arq = fopen(ARQUIVO_ITEM, "r+b");
-    fseek(arq, r.pos, SEEK_SET);
 
     r.item->disponivel = 0;
-
+    fseek(arq, r.pos, SEEK_SET);
     fwrite(r.item, sizeof(Itemcardapio), 1, arq);
 
     fclose(arq);
