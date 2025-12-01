@@ -22,5 +22,8 @@ void cadastrar_cliente(void);
 void listar_clientes(void);
 void editar_cliente(void);
 void excluir_cliente(void);
-
+int confirma_dados_cliente(Cliente* cli);
+int cpf_existente(char* cpf);
+void gravar_cliente(Cliente* cli);
+void exibir_cliente(Cliente* cli);
 #endif
