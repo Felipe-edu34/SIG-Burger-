@@ -55,6 +55,19 @@ int confirma_dados_cliente(Cliente* cli) {
 }
 
 
+
+void gravar_cliente(Cliente* cli) {
+    
+    FILE* arq = fopen(ARQUIVO_CLIENTES, "ab");
+    if (arq == NULL) {
+        printf("Erro ao abrir arquivo de clientes!\n");
+        return;
+    }
+    fwrite(cli, sizeof(Cliente), 1, arq);
+    fclose(arq);
+}
+
+
 void cadastrar_cliente(void) {
     Cliente* cli = (Cliente*) malloc(sizeof(Cliente));
     FILE* arq_cliente;
