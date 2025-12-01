@@ -39,6 +39,22 @@ void exibir_cliente(Cliente* cli) {
 
 
 
+int confirma_dados_cliente(Cliente* cli) {
+    char confirm;
+    limpar_tela();
+    exibir_cliente(cli);
+    printf("Os dados do cliente estão corretos? (S/N): ");
+    scanf(" %c", &confirm);
+    limparBuffer();
+
+    if (confirm == 'S' || confirm == 's') {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+
 void cadastrar_cliente(void) {
     Cliente* cli = (Cliente*) malloc(sizeof(Cliente));
     FILE* arq_cliente;
