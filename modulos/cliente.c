@@ -26,6 +26,19 @@ void menu_clientes(void) {
 
 
 
+void exibir_cliente(Cliente* cli) {
+    printf("╔══════════════════════════════════════════════════╗\n");
+    printf("║                DADOS DO CLIENTE                  ║\n");
+    printf("╠══════════════════════════════════════════════════╣\n");
+    printf("║ CPF:       %s\n", cli->cpf);
+    printf("║ Nome:      %s\n", cli->nome);
+    printf("║ Telefone:  %s\n", cli->telefone);
+    printf("║ Endereço:  %s\n", cli->endereco);
+    printf("╚══════════════════════════════════════════════════╝\n");
+}
+
+
+
 void cadastrar_cliente(void) {
     Cliente* cli = (Cliente*) malloc(sizeof(Cliente));
     FILE* arq_cliente;
