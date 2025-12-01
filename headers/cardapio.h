@@ -27,6 +27,12 @@ typedef struct NodeItem {
     struct NodeItem* prox;
 } NodeItem;
 
+
+typedef struct {
+    Itemcardapio item;
+    long pos;
+} ItemComPos;
+
 void tela_menu_principal();
 void cardapio();
 int confirma_dados_cardapio(Itemcardapio* item);
