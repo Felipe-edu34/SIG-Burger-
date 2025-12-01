@@ -221,6 +221,13 @@ void editar_cliente(void) {
     ler_nome_cliente(cli.nome);
     ler_telefone_cliente(cli.telefone);
     ler_endereco_cliente(cli.endereco);
+
+    if (!confirma_dados_cliente(&cli)) {
+        printf("\n        Edição cancelada pelo usuário.\n");
+        fclose(fp);
+        pausar();
+        return;
+    }
     
     fseek(fp, pos_arquivo, SEEK_SET);
     fwrite(&cli, sizeof(Cliente), 1, fp);
