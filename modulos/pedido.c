@@ -153,8 +153,20 @@ void cadastrar_pedido() {
     fclose(arq_cli);
 
     if (strlen(cli.endereco) > 0) {
-        ped->eh_delivery = 1;
-        ped->taxa_entrega = TAXA_ENTREGA;
+        printf("Delivery? (S/N): ");
+        char opc;
+        scanf(" %c", &opc);
+
+        if (opc == 'S' || opc == 's') {
+            ped->eh_delivery = 1;
+            ped->taxa_entrega = TAXA_ENTREGA;
+            strcpy(ped->endereco_entrega, cli.endereco);
+        } else {
+            ped->eh_delivery = 0;
+            ped->taxa_entrega = 0.0;
+            strcpy(ped->endereco_entrega, "Consumo no local");
+        }
+
     } else {
         ped->eh_delivery = 0;
         ped->taxa_entrega = 0.0;

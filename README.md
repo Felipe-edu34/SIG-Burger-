@@ -124,22 +124,19 @@ Gerencia a movimentação financeira da hamburgueria.
 
 | Módulo         | Status                | Descrição                     |
 | -------------- | --------------------- | ----------------------------- |
-| Menu Principal | 🚧 Em desenvolvimento | Interface de navegação        |
-| Clientes       | 🚧 Em desenvolvimento | Cadastro e gestão de clientes |
-| Pedidos        | 🚧 Em desenvolvimento | Criação e controle de pedidos |
-| Cardápio       | 🚧 Em desenvolvimento | Controle de lanches e preços  |
-| Estoque        | 🚧 Em desenvolvimento | Controle de insumos           |
-| Financeiro     | 🚧 Em desenvolvimento | Controle de finanças          |
+| Menu Principal | ✅ Concluído | Interface de navegação        |
+| Clientes       | ✅ Concluído | Cadastro e gestão de clientes |
+| Pedidos        | ✅ Concluído | Criação e controle de pedidos |
+| Cardápio       | ✅ Concluído | Controle de lanches e preços  |
+| Estoque        | ✅ Concluído | Controle de insumos           |
+| Financeiro     | ✅ Concluído | Controle de finanças          |
 
 ---
 
 ## Próximos Passos
 
-* CRUD de todos mo modulos
-* Implementar persistência em arquivos Binarios.
-* Implementar relatórios e análises financeiras.
-* Criar validação de entradas.
-
+* Apresentação do projeto.
+* Aguardo para orientção de mudanças finais.
 ---
 
 ## Desenvolvedores
